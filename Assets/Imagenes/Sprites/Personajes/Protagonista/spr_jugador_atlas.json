@@ -1,0 +1,99 @@
+{
+    "frames": [
+        {
+            "filename": "spr_jugador_agachado1",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 1,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "protagonista",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 130,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "spr_jugador_andando1",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 1,
+                "y": 130
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "spr_jugador_andando2",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 130,
+                "y": 130
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "spr_jugador_de_frente1",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 259,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "spr_jugador_golpeado1",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 259,
+                "y": 130
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "spr_jugador_saltando1",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 1,
+                "y": 259
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ],
+    "meta": {
+        "description": "Atlas generado con Atlas Packer Gamma V2",
+        "web": "https://gammafp.github.io/atlas-packer-phaser/"
+    }
+}
