@@ -55,6 +55,5 @@ export default class UI {
             this.monedasRecolectadas += puntosMoneda;
             this.textoMonedasRecolectadas.setText("Monedas: " + this.monedasRecolectadas);
         }
-        
     }
 }
