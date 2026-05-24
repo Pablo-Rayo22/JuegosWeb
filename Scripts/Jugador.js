@@ -3,14 +3,15 @@ import Entidad from "./Entidad.js"
 export default class Jugador extends Entidad {
     // Metodos
     constructor (escena, x, y) {
-        super(escena, x, y, "spr_jugador", "spr_jugador_de_frente1");
+        super(escena, x, y, "spr_jugador", "spr_jugador_quieto1");
         // Variables
         this.velocidadEjeX = 200; // Velocidad del jugador
         this.fuerzaDeSalto = -560; // Cuanto de alto puede saltar
         this.saltando = false;
         this.tiempoSalto = 0; // Tiempo que el jugador permanece en el aire (en milisegundos)
         this.tiempoMaximo = 100; // Tiempo máximo que puede permanecer el jugador en el aire (en milisegundos)
-
+        this.enEscalera = false;
+        this.velocidadEscalando = 150;
         // Llamadas a metodos 
         // Controles
         this.crearControles();
@@ -28,6 +29,7 @@ export default class Jugador extends Entidad {
     }
     // Comportamiento del jugador
     comportamiento () {
+        this.enEscalera = false //En cada frame comprobamos si el jugador está en una escalera
         this.mover();   
         this.saltar();    
         this.reproducirAnimacionesJugador();
@@ -102,12 +104,12 @@ export default class Jugador extends Entidad {
         }
        
 
-        if (!this.escena.anims.exists("spr_jugador_de_frente")) {
+        if (!this.escena.anims.exists("spr_jugador_quieto")) {
             // Animacion de frente
             this.animacionFrente = {} //Creamos un nuevo objeto
-            this.animacionFrente.key = "spr_jugador_de_frente";
+            this.animacionFrente.key = "spr_jugador_quieto";
             this.animacionFrente.frames = this.escena.anims.generateFrameNames ("spr_jugador", {
-                prefix: "spr_jugador_de_frente",
+                prefix: "spr_jugador_quieto",
                 start: 1,
                 end: 1,
             });
@@ -147,7 +149,10 @@ export default class Jugador extends Entidad {
         }
     }
     reproducirAnimacionesJugador() {
-        
+        if (this.enEscalera && (this.cursores.up.isDown || this.cursores.down.isDown)) {
+            this.play("spr_jugador_escalando", true);
+            return;
+        }
         if (!this.body.onFloor()) {
             this.play("spr_jugador_saltando", true);
             return;
@@ -157,7 +162,7 @@ export default class Jugador extends Entidad {
             return;
         }
         else {
-            this.play("spr_jugador_de_frente", true);
+            this.play("spr_jugador_quieto", true);
         }
     }  
 }    

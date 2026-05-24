@@ -170,7 +170,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
     }
     // Creamos al jugador en la escena
     crearJugador() {
-        this.jugador = new Jugador (this, 2760, 64);
+        this.jugador = new Jugador (this, 3520, 64); //3520, 1850
     }
     //
     // Creamos los enemigos
@@ -316,9 +316,9 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         this.sonidoItem.play( {
             volume: 0.8,
         }) 
-        this.time.delayedCall (1000, () =>{
+        this.time.delayedCall (500, () =>{
             this.sonidoVictoria.play(); // Se reproduce el sonido con un delay de 1000ms
-            //this.scene.pause();
+            this.scene.pause();
         })
         this.time.delayedCall (0, () => {
 
@@ -338,7 +338,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
             enemigo.disableBody(true, true); // Deshabilitamos al enemigo de la escena
             console.log ("Enemigo muerto");
             jugador.setVelocityY(-150); // Recibe un pequeño impulso al saltar sobre un enemigo
-            this.UI.actualizarContadorMonedas(5); // Al matar a un enemigo aumenta el contador de monedas
+            this.UI.actualizarContadorMonedas(3); // Al matar a un enemigo aumenta el contador de monedas
         }
         else {
             this.morir(); // El jugador muere
@@ -377,7 +377,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         this.tilesPlataformas.setCollisionByExclusion([-1]); // Activamos la colision del nuevo bloque
     }
     activarPalanca() {
-         this.tilesPuente.setVisible(true); // Hacemos visible el puente
+        this.tilesPuente.setVisible(true); // Hacemos visible el puente
         this.tilesPuente.setCollisionByExclusion([-1]); // Habilitamos las fisicas del puente
         this.tilesPinchosPuente.setVisible(true); // Hacemos visible los pinchos del puente
         this.tilesPinchosPuente.setCollisionByExclusion([-1]); // Habilitamos las fisicas de los pinchos del puente
@@ -408,5 +408,3 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         }
     }
 }
-
-

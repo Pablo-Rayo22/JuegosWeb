@@ -7,6 +7,11 @@ export default class Sierra extends Enemigo {
         // Para evitar que se muevan
         this.body.setImmovable(true);
         this.body.moves = false;
+        // Fijamos su escaña hy su hitbox
+        this.fijarEscala(1);
+        this.fijarHitbox(64, 64, 0, 0);
+        // Fijamos la profuncidad
+        this.fijarProfundidad(3);
         // Animaciones
         this.crearAnimacionesSierra();
     }

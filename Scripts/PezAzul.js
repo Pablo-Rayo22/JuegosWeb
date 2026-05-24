@@ -14,7 +14,7 @@ export default class PezAzul extends Enemigo {
     }
 
     comportamiento () {
-        this.play("spr_pez_azul_nadando", true);
+        this.play("spr_pez_morado_saltando", true);
         this.detectarJugador();
     }
 

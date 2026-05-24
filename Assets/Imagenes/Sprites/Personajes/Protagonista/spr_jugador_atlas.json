@@ -14,50 +14,11 @@
             }
         },
         {
-            "filename": "protagonista",
-            "frame": {
-                "w": 128,
-                "h": 128,
-                "x": 130,
-                "y": 1
-            },
-            "anchor": {
-                "x": 0.5,
-                "y": 0.5
-            }
-        },
-        {
             "filename": "spr_jugador_andando1",
             "frame": {
                 "w": 128,
                 "h": 128,
-                "x": 1,
-                "y": 130
-            },
-            "anchor": {
-                "x": 0.5,
-                "y": 0.5
-            }
-        },
-        {
-            "filename": "spr_jugador_andando2",
-            "frame": {
-                "w": 128,
-                "h": 128,
                 "x": 130,
-                "y": 130
-            },
-            "anchor": {
-                "x": 0.5,
-                "y": 0.5
-            }
-        },
-        {
-            "filename": "spr_jugador_de_frente1",
-            "frame": {
-                "w": 128,
-                "h": 128,
-                "x": 259,
                 "y": 1
             },
             "anchor": {
@@ -70,8 +31,34 @@
             "frame": {
                 "w": 128,
                 "h": 128,
-                "x": 259,
+                "x": 1,
                 "y": 130
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "spr_jugador_de_frente1",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 130,
+                "y": 130
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "spr_jugador_andando2",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 259,
+                "y": 1
             },
             "anchor": {
                 "x": 0.5,
@@ -83,7 +70,46 @@
             "frame": {
                 "w": 128,
                 "h": 128,
+                "x": 259,
+                "y": 130
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "spr_jugador_escalando2",
+            "frame": {
+                "w": 128,
+                "h": 128,
                 "x": 1,
+                "y": 259
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "spr_jugador_escalando1",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 130,
+                "y": 259
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "spr_jugador_quieto1",
+            "frame": {
+                "w": 128,
+                "h": 128,
+                "x": 259,
                 "y": 259
             },
             "anchor": {
