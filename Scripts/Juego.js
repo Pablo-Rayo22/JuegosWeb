@@ -1,7 +1,9 @@
 /// @author: Pablo Jimenez Garcia
 /// asignatura: Juegos para la Web
 
-import EscenaArboles from "./EscenaArboles.js";
+import EscenaArboles from "../Escenas/EscenaArboles.js";
+import EscenaColinas from "../Escenas/EscenaColinas.js";
+
 // Constantes
 const ANCHO = 3840;
 const ALTO = 640;
@@ -16,9 +18,9 @@ let config = {
         height: ALTO,
     },
     input: {
-        gamepad: true // <--- ¡Añadimos esto para habilitar el soporte de mandos!
+        gamepad: true // <--- ¡Mantenemos el soporte de mandos activo!
     },
-    scene: [EscenaArboles],
+    scene: [EscenaArboles, EscenaColinas], // <--- ¡Incluimos ambas escenas en el array!
     physics: {
         default: "arcade",
         arcade: {

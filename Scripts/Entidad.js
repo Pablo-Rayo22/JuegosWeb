@@ -10,7 +10,6 @@ export default class Entidad extends Phaser.Physics.Arcade.Sprite {
         this.escena.add.existing(this);
         //Añadimos la entidad a Physics
         this.escena.physics.add.existing(this);
-        
     }
 
     update() {

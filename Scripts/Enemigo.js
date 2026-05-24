@@ -2,7 +2,7 @@ import Entidad from "./Entidad.js"
 // export default es para poder importar la clase en otros ficheros .js
 export default class Enemigo extends Entidad {
     constructor(escena, x, y, jugador, sprite, frameSprite) {
-        super(escena, x, y, jugador, sprite, frameSprite);
+        super(escena, x, y, sprite, frameSprite);
         // Variables
         // Guardamos la referencia al jugador
         this.jugador = jugador
