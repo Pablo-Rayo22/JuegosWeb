@@ -15,6 +15,12 @@ export default class Jugador extends Entidad {
         // Variables añadidas para registrar ráfagas de pulsación del mando
         this.padSaltoJustDown = false;
         this.padSaltoJustUp = false;
+        
+        // Variable para guardar la posicionInicial del jugador
+        this.posicionInicial = {
+            x: 130,
+            y: 530,
+        };
 
         // Llamadas a metodos 
         // Controles

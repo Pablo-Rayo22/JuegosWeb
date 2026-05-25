@@ -242,7 +242,8 @@ export default class EscenaColinas extends Phaser.Scene {
     crearContadores() {
         this.UI.crearContadorTiempo(20, 90, this.tiempo);
         this.UI.actualizarContadorTiempo(this.delay, this.tiempo);
-        this.UI.crearContadorMonedas(750, 90);
+        this.UI.crearContadorMonedas(450, 90);
+        this.UI.crearContadorVidas(20, 120)
     }
 
     /***************************** COLISONES **********************************/
@@ -361,8 +362,7 @@ export default class EscenaColinas extends Phaser.Scene {
     // Metodo para controlar la logica de morir del jugador
     morir() {
         this.sonidoMuerteJugador.play(); // Reproducimos el sonido cuando el jugador muere
-        this.musicaFondo.stop(); // Detenemos la musica
-        this.reiniciarEscena();
+        this.restarVidas();
     }
     // Golpear bloques
     golpearBloque(jugador, tile) {
@@ -391,8 +391,15 @@ export default class EscenaColinas extends Phaser.Scene {
         this.tilesPlataformas.setCollisionByExclusion([-1]); // Activamos la colision del nuevo bloque
     }
 
-    reiniciarEscena () {
-        this.scene.restart();
+    restarVidas () {
+        this.UI.actualizarContadorVidas();
+        if (this.UI.vidas > 0) {
+            this.jugador.setPosition (
+                this.jugador.posicionInicial.x,
+                this.jugador.posicionInicial.y,
+            )
+            this.jugador.setVelocity(0, 0)
+        }
     }
 
     activarPalanca() {
