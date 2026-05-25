@@ -1,17 +1,21 @@
 import Entidad from "./Entidad.js"
+
 // export default es para poder importar la clase en otros ficheros .js
 export default class Jugador extends Entidad {
     // Metodos
     constructor (escena, x, y) {
-        super(escena, x, y, "spr_jugador", "spr_jugador_quieto1");
+        super(escena, x, y, "spr_jugador", "spr_jugador_de_frente1");
         // Variables
         this.velocidadEjeX = 200; // Velocidad del jugador
         this.fuerzaDeSalto = -560; // Cuanto de alto puede saltar
         this.saltando = false;
         this.tiempoSalto = 0; // Tiempo que el jugador permanece en el aire (en milisegundos)
         this.tiempoMaximo = 100; // Tiempo máximo que puede permanecer el jugador en el aire (en milisegundos)
-        this.enEscalera = false;
-        this.velocidadEscalando = 150;
+
+        // Variables añadidas para registrar ráfagas de pulsación del mando
+        this.padSaltoJustDown = false;
+        this.padSaltoJustUp = false;
+
         // Llamadas a metodos 
         // Controles
         this.crearControles();
@@ -25,11 +29,18 @@ export default class Jugador extends Entidad {
     }
 
     update () {
+        // DETECCIÓN ULTRA SEGURA: Solo busca el mando si el sistema de Phaser está totalmente inicializado
+        if (this.escena.input && this.escena.input.gamepad && this.escena.input.gamepad.total > 0) {
+            this.pad = this.escena.input.gamepad.pad1;
+        } else {
+            this.pad = null; // Si no hay mando o no está listo, se vuelve null de forma segura
+        }
+        
         this.comportamiento();
     }
+    
     // Comportamiento del jugador
     comportamiento () {
-        this.enEscalera = false //En cada frame comprobamos si el jugador está en una escalera
         this.mover();   
         this.saltar();    
         this.reproducirAnimacionesJugador();
@@ -38,60 +49,119 @@ export default class Jugador extends Entidad {
     mover() {
         let velocidad = this.velocidadEjeX;
         this.voltear();
-        // Correr
-        if (this.teclaX.isDown) {
-            velocidad*=1.7;
+        
+        // --- DETECTAR CORRER (Teclado X o Botón X del mando) ---
+        let botonCorrerMando = false;
+        if (this.pad && this.pad.buttons && this.pad.X) {
+            botonCorrerMando = this.pad.X;
         }
-        // Andar
-        if (this.cursores.left.isDown) {
+
+        if (this.teclaX.isDown || botonCorrerMando) {
+            velocidad *= 1.7;
+        }
+        
+        // --- DETECTAR DIRECCIÓN (Teclado o Mando) ---
+        let moverIzquierda = this.cursores.left.isDown;
+        let moverDerecha = this.cursores.right.isDown;
+
+        // Comprobamos los ejes de forma segura sin asumir que las propiedades existen inmediatamente
+        if (this.pad && this.pad.leftStick) {
+            let stickX = this.pad.leftStick.x;
+            
+            if (stickX < -0.2 || this.pad.left) {
+                moverIzquierda = true;
+            }
+            if (stickX > 0.2 || this.pad.right) {
+                moverDerecha = true;
+            }
+        }
+
+        // Aplicar movimiento final
+        if (moverIzquierda) {
             this.aplicarVelocidadEjeX(-velocidad);
         }
-        else if (this.cursores.right.isDown) {
+        else if (moverDerecha) {
             this.aplicarVelocidadEjeX(velocidad);
         }
         else {
             this.aplicarVelocidadEjeX(0);
         }
     }
+    
     // Salto
     saltar() {
-        // Si el jugador esta tocando suelo y se ha pulsado la tecla espaico
-        if (this.body.onFloor() && Phaser.Input.Keyboard.JustDown(this.cursores.space)) { // Si pulsas la tecla espacio
+        // --- DETECTAR ENTRADAS DE SALTO (TECLADO) ---
+        let spaceJustDown = Phaser.Input.Keyboard.JustDown(this.cursores.space);
+        let spaceIsDown = this.cursores.space.isDown;
+        let spaceJustUp = Phaser.Input.Keyboard.JustUp(this.cursores.space);
+
+        // --- DETECTAR ENTRADAS DE SALTO (MANDO) ---
+        let botonSaltoJustDown = this.padSaltoJustDown;
+        let botonSaltoIsDown = false;
+        let botonSaltoJustUp = this.padSaltoJustUp;
+
+        if (this.pad && this.pad.buttons && this.pad.buttons[0]) {
+            // Evaluamos si el botón A se mantiene retenido
+            botonSaltoIsDown = this.pad.buttons[0].pressed;
+        }
+
+        // Si el jugador esta tocando suelo y se ha pulsado espacio o el botón A del mando
+        if (this.body.onFloor() && (spaceJustDown || botonSaltoJustDown)) {
             this.aplicarVelocidadEjeY(this.fuerzaDeSalto);
             this.saltando = true;
             this.tiempoSalto = 0;
         }
-        // Si mantienes la tecla espacio pulsada y el jugador esta en el suelo
-        if(this.saltando && this.cursores.space.isDown) { 
-            this.tiempoSalto += this.escena.game.loop.delta // Para que sea independiente de los frames
+        
+        // Si mantienes el botón pulsado para controlar la altura del salto
+        if (this.saltando && (spaceIsDown || botonSaltoIsDown)) { 
+            this.tiempoSalto += this.escena.game.loop.delta; // Para que sea independiente de los frames
             if (this.tiempoSalto < this.tiempoMaximo) {
-            this.aplicarVelocidadEjeY(this.fuerzaDeSalto);
+                this.aplicarVelocidadEjeY(this.fuerzaDeSalto);
             }
         }
-        // Si se ha soltado la tecla espacio
-        if (Phaser.Input.Keyboard.JustUp(this.cursores.space)) {
+        
+        // Si se ha soltado el botón de salto antes de tiempo (frena el salto acumulado)
+        if (spaceJustUp || botonSaltoJustUp) {
             if (this.body.velocity.y < 0) {
                 this.aplicarVelocidadEjeY(this.body.velocity.y * 0.5);
             }
             this.saltando = false;
         }
-        // Si el jugador esta tocando suelo
+        
+        // Si el jugador esta tocando suelo volvemos a resetear el estado de salto
         if (this.body.onFloor()) {
             this.saltando = false;
         }   
+
+        // IMPORTANTE: Reseteamos las ráfagas de eventos para que solo duren un frame de ejecución
+        this.padSaltoJustDown = false;
+        this.padSaltoJustUp = false;
     }
 
     // Controles
     crearControles() {
-        this.cursores  = this.escena.input.keyboard.createCursorKeys();
+        this.cursores = this.escena.input.keyboard.createCursorKeys();
         this.teclaX = this.escena.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
+        this.pad = null;
+
+        // Escuchadores de eventos globales para capturar pulsaciones instantáneas del mando de forma limpia
+        this.escena.input.gamepad.on('down', (pad, button) => {
+            if (button.index === 0) { // Index 0 es por defecto el botón A (Mando Xbox) o Cruz (PlayStation)
+                this.padSaltoJustDown = true;
+            }
+        });
+
+        this.escena.input.gamepad.on('up', (pad, button) => {
+            if (button.index === 0) {
+                this.padSaltoJustUp = true;
+            }
+        });
     }
 
     // Animaciones
     crearAnimacionesJugador () {
         if (!this.escena.anims.exists("spr_jugador_andando")) {
-            // Animacion de andar
-            this.animacionAndar = {} //Creamos un nuevo objeto
+            this.animacionAndar = {} 
             this.animacionAndar.key = "spr_jugador_andando";
             this.animacionAndar.frames = this.escena.anims.generateFrameNames ("spr_jugador", {
                 prefix: "spr_jugador_andando",
@@ -103,13 +173,11 @@ export default class Jugador extends Entidad {
             this.escena.anims.create(this.animacionAndar);
         }
        
-
-        if (!this.escena.anims.exists("spr_jugador_quieto")) {
-            // Animacion de frente
-            this.animacionFrente = {} //Creamos un nuevo objeto
-            this.animacionFrente.key = "spr_jugador_quieto";
+        if (!this.escena.anims.exists("spr_jugador_de_frente")) {
+            this.animacionFrente = {} 
+            this.animacionFrente.key = "spr_jugador_de_frente";
             this.animacionFrente.frames = this.escena.anims.generateFrameNames ("spr_jugador", {
-                prefix: "spr_jugador_quieto",
+                prefix: "spr_jugador_de_frente",
                 start: 1,
                 end: 1,
             });
@@ -118,10 +186,8 @@ export default class Jugador extends Entidad {
             this.escena.anims.create(this.animacionFrente);
         }
         
-
         if (!this.escena.anims.exists("spr_jugador_saltando")) {
-            // Animacion de salto
-            this.animacionSalto = {} //Creamos un nuevo objeto
+            this.animacionSalto = {} 
             this.animacionSalto.key = "spr_jugador_saltando";
             this.animacionSalto.frames = this.escena.anims.generateFrameNames ("spr_jugador", {
                 prefix: "spr_jugador_saltando",
@@ -131,12 +197,10 @@ export default class Jugador extends Entidad {
             this.animacionSalto.frameRate = 6;
             this.animacionSalto.repeat = -1;
             this.escena.anims.create(this.animacionSalto);
-
         }
         
         if (!this.escena.anims.exists("spr_jugador_golpeado")) {
-            // Animacion de ser golpeado
-            this.animacionDeSerGolpeado = {} //Creamos un nuevo objeto
+            this.animacionDeSerGolpeado = {} 
             this.animacionDeSerGolpeado.key = "spr_jugador_golpeado";
             this.animacionDeSerGolpeado.frames = this.escena.anims.generateFrameNames ("spr_jugador", {
                 prefix: "spr_jugador_golpeado",
@@ -148,11 +212,8 @@ export default class Jugador extends Entidad {
             this.escena.anims.create(this.animacionDeSerGolpeado);
         }
     }
+    
     reproducirAnimacionesJugador() {
-        if (this.enEscalera && (this.cursores.up.isDown || this.cursores.down.isDown)) {
-            this.play("spr_jugador_escalando", true);
-            return;
-        }
         if (!this.body.onFloor()) {
             this.play("spr_jugador_saltando", true);
             return;
@@ -162,7 +223,7 @@ export default class Jugador extends Entidad {
             return;
         }
         else {
-            this.play("spr_jugador_quieto", true);
+            this.play("spr_jugador_de_frente", true);
         }
     }  
-}    
+}

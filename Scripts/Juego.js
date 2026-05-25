@@ -1,5 +1,9 @@
+/// @author: Pablo Jimenez Garcia
+/// asignatura: Juegos para la Web
+
 import EscenaArboles from "../Escenas/EscenaArboles.js";
 import EscenaColinas from "../Escenas/EscenaColinas.js";
+
 // Constantes
 const ANCHO = 3840;
 const ALTO = 640;
@@ -9,11 +13,14 @@ let config = {
     type: Phaser.AUTO,
     scale: {
         mode: Phaser.Scale.RESIZE, // Escala la ventana del navegador para que se ajuste a la pantalla
-        autoCenter: Phaser.Scale.Center_BOTH, // Centra automáticamente la ventana del navegador
+        autoCenter: Phaser.Scale.CENTER_BOTH, // Centra automáticamente la ventana del navegador
         width: ANCHO,
         height: ALTO,
     },
-    scene: [EscenaArboles, EscenaColinas],
+    input: {
+        gamepad: true // <--- ¡Mantenemos el soporte de mandos activo!
+    },
+    scene: [EscenaArboles, EscenaColinas], // <--- ¡Incluimos ambas escenas en el array!
     physics: {
         default: "arcade",
         arcade: {
