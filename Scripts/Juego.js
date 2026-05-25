@@ -18,9 +18,9 @@ let config = {
         height: ALTO,
     },
     input: {
-        gamepad: true // <--- ¡Mantenemos el soporte de mandos activo!
+        gamepad: true // ¡Mantenemos el soporte de mandos activo!
     },
-    scene: [EscenaArboles, EscenaColinas], // <--- ¡Incluimos ambas escenas en el array!
+    scene: [EscenaArboles, EscenaColinas], // ¡Incluimos ambas escenas en el array!
     physics: {
         default: "arcade",
         arcade: {

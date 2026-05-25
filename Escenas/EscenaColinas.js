@@ -173,7 +173,7 @@ export default class EscenaColinas extends Phaser.Scene {
     }
     // Creamos al jugador en la escena
     crearJugador() {
-        this.jugador = new Jugador (this, 130, 530);
+        this.jugador = new Jugador (this, 2536 - 64, 460);
     }
 
     crearEnemigos() {
@@ -261,7 +261,6 @@ export default class EscenaColinas extends Phaser.Scene {
         this.physics.add.collider(this.jugador, this.tilesSuelo);
         this.physics.add.collider (this.grupoCaracoles, this.tilesSuelo);
         this.physics.add.collider (this.grupoGusanosAzules, this.tilesSuelo);
-        this.physics.add.collider (this.grupoPecesAzules, this.tilesSuelo);
     }
     colisionesPlataformas () {
         this.physics.add.collider (this.jugador, this.tilesPlataformas, this.golpearBloque, null, this);
@@ -283,7 +282,7 @@ export default class EscenaColinas extends Phaser.Scene {
     }
 
     colisionesAgua () {
-        this.physics.add.collider (this.grupoPecesAzules, this.tilesAgua);
+        this.physics.add.overlap (this.grupoPecesAzules, this.tilesAgua);
     }
 
     colisionesEnemigos () {

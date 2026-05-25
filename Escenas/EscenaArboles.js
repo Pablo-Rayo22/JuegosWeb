@@ -1,6 +1,7 @@
 import Jugador from "../Scripts/Jugador.js";
 import Joya from "../Scripts/Joya.js";
 import Moneda from "../Scripts/Moneda.js";
+import OrbeVida from "../Scripts/OrbeVida.js";
 import Caracol from "../Scripts/Caracol.js";
 import GusanoAzul from "../Scripts/GusanoAzul.js";
 import Sierra from "../Scripts/Sierra.js";
@@ -74,6 +75,8 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         // Monedas
         this.load.image("moneda", "Assets/Imagenes/Sprites/Objetos/Recolectables/Monedas/monedaOro.png");
         this.load.atlas("spr_moneda_oro", "Assets/Imagenes/Sprites/Objetos/Recolectables/Monedas/spr_moneda_oro.png", "Assets/Imagenes/Sprites/Objetos/Recolectables/Monedas/spr_moneda_oro_atlas.json");
+        // Orbes vida
+        this.load.image ("orbeVida", "Assets/Imagenes/Sprites/Objetos/Recolectables/OrbesVida/orbeVida.png");
 
         // Objetos interactivos
         // Palanca
@@ -164,13 +167,14 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         // Objetos recolectables
         this.objetosJoya = this.mapa.getObjectLayer ("joya").objects;
         this.objetosMoneda = this.mapa.getObjectLayer ("monedas").objects;
+        this.objetosOrbesVida = this.mapa.getObjectLayer("orbesVida").objects;
         // Objetos interactivos
         this.objetosPalanca = this.mapa.getObjectLayer ("palancas").objects;
         this.objetosTrampolin = this.mapa.getObjectLayer ("trampolines").objects;
     }
     // Creamos al jugador en la escena
     crearJugador() {
-        this.jugador = new Jugador (this, 130, 530);
+        this.jugador = new Jugador (this, 2560, 64);
     }
     //
     // Creamos los enemigos
@@ -198,6 +202,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         // Creamos grupos para luego recorrerlos
         this.grupoJoyas = this.physics.add.group();
         this.grupoMonedas = this.physics.add.group();
+        this.grupoOrbesVida = this.physics.add.group();
 
         this.objetosJoya.forEach(recolectable => {
             let joya = new Joya (this, recolectable.x, recolectable.y, "Azul");
@@ -209,6 +214,9 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
             let moneda = new Moneda (this, recolectable.x, recolectable.y);
             this.grupoMonedas.add(moneda);
         });
+        this.objetosOrbesVida.forEach (recolectable => {
+            let orbeVida = new OrbeVida (this, recolectable.x, recolectable.y);
+        })
     }
     //
     // Creamos los objetos interactivos
