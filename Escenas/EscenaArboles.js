@@ -70,7 +70,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
 
         // Objetos recolectables
         // Joyas
-        this.load.image("joya", "Assets/Imagenes/Sprites/Objetos/Recolectables/Joyas/joyaAzul.png");
+        this.load.image("joyaAzul", "Assets/Imagenes/Sprites/Objetos/Recolectables/Joyas/joyaAzul.png");
         // Monedas
         this.load.image("moneda", "Assets/Imagenes/Sprites/Objetos/Recolectables/Monedas/monedaOro.png");
         this.load.atlas("spr_moneda_oro", "Assets/Imagenes/Sprites/Objetos/Recolectables/Monedas/spr_moneda_oro.png", "Assets/Imagenes/Sprites/Objetos/Recolectables/Monedas/spr_moneda_oro_atlas.json");
@@ -170,7 +170,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
     }
     // Creamos al jugador en la escena
     crearJugador() {
-        this.jugador = new Jugador (this, 3520, 64); //3520, 1850
+        this.jugador = new Jugador (this, 130, 530);
     }
     //
     // Creamos los enemigos
@@ -200,7 +200,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         this.grupoMonedas = this.physics.add.group();
 
         this.objetosJoya.forEach(recolectable => {
-            let joya = new Joya (this, recolectable.x, recolectable.y);
+            let joya = new Joya (this, recolectable.x, recolectable.y, "Azul");
             this.grupoJoyas.add(joya);
             joya.setVisible(false); // Ocultamos la joya
             joya.body.enable = false; // Quitamos colision a la joya
