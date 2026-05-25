@@ -1,6 +1,6 @@
 import Enemigo from "./Enemigo.js";
 
-export default class PezAzul extends Enemigo {
+export default class Pez extends Enemigo {
     constructor(escena, x, y, jugador) {
         super(escena, x, y, jugador, "spr_pez_azul", "spr_pez_azul_descansando1"); 
         this.velocidadEjeX = 50;
@@ -14,7 +14,6 @@ export default class PezAzul extends Enemigo {
     }
 
     comportamiento () {
-        this.play("spr_pez_morado_saltando", true);
         this.detectarJugador();
     }
 

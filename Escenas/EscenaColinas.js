@@ -76,7 +76,7 @@ export default class EscenaColinas extends Phaser.Scene {
         // Orbes vida
         this.load.image ("orbeVida", "Assets/Imagenes/Sprites/Objetos/Recolectables/OrbesVida/orbeVida.png");
         // Joya
-        this.load.image ("joya", "Assets/Imagenes/Sprites/Objetos/Recolectables/Joyas/joyaVerde.png")
+        this.load.image ("joyaverde", "Assets/Imagenes/Sprites/Objetos/Recolectables/Joyas/joyaVerde.png")
 
         // Objetos interactivos
         // Palanca
@@ -150,10 +150,10 @@ export default class EscenaColinas extends Phaser.Scene {
             this.tilesSuelo = this.mapa.createLayer ("suelo", this.hojaTiles, 0, 0);
             this.tilesPlataformas = this.mapa.createLayer ("plataformas", this.hojaTiles, 0, 0);
             this.tilesDecoracion = this.mapa.createLayer ("decoracion", this.hojaTiles, 0, 0);
-            this.tilesAgua = this.mapa.createLayer ("agua", this.hojaTiles, 0, 0).setDepth(6);;
+            this.tilesAgua = this.mapa.createLayer ("agua", this.hojaTiles, 0, 0).setDepth(6);
             this.tilesPeligros = this.mapa.createLayer ("peligros", this.hojaTiles, 0, 0);
             this.tilesPlataformaJoya = this.mapa.createLayer("plataformaJoya", this.hojaTiles, 0, 0).setVisible(false); // Hacemos invisibles los tiles  
-            this.tilesParedPinchos = this.mapa.createLayer("paredPinchos", this.hojaTiles, 0, 0). setVisible(false);
+            this.tilesParedPinchos = this.mapa.createLayer("paredPinchos", this.hojaTiles, 0, 0). setVisible(false) // Hacemos invisibles los tiles
     }
     // Creamos las capas de objetos que vienen de Tiled
     crearCapasObjetos() {
@@ -173,7 +173,7 @@ export default class EscenaColinas extends Phaser.Scene {
     }
     // Creamos al jugador en la escena
     crearJugador() {
-        this.jugador = new Jugador (this, 2400, 300);
+        this.jugador = new Jugador (this, 130, 530);
     }
 
     crearEnemigos() {
@@ -209,9 +209,9 @@ export default class EscenaColinas extends Phaser.Scene {
         this.grupoOrbesVida = this.physics.add.group();
 
         this.objetosJoya.forEach(recolectable => {
-            let joya = new Joya (this, recolectable.x, recolectable.y);
+            let joya = new Joya (this, recolectable.x, recolectable.y, "verde");
             this.grupoJoyas.add(joya);
-            joya.setVisible(true); // Ocultamos la joya
+            joya.setVisible(false); // Ocultamos la joya
             joya.body.enable = false; // Quitamos colision a la joya
         });
         this.objetosMoneda.forEach(recolectable => {
@@ -265,16 +265,21 @@ export default class EscenaColinas extends Phaser.Scene {
     }
     colisionesPlataformas () {
         this.physics.add.collider (this.jugador, this.tilesPlataformas, this.golpearBloque, null, this);
+        this.physics.add.collider (this.jugador, this.tilesPlataformaJoya, this.golpearBloque, null, this);
         this.physics.add.collider (this.grupoCaracoles, this.tilesPlataformas, this.enemigosIA, null, this);
         this.physics.add.collider (this.grupoGusanosAzules, this.tilesPlataformas, this.enemigosIA, null, this);
-
     }
 
     colisionesPeligros () {
         this.physics.add.collider(this.jugador, this.tilesPeligros, this.morir, null, this);
-        this.physics.add.collider(this.jugador, this.tilesParedPinchos, this.morir, null, this);
+        this.colliderParedPinchos = this.physics.add.collider(this.jugador, this.tilesParedPinchos, this.morir, null, this);
         this.physics.add.collider(this.grupoCaracoles, this.tilesPeligros, this.enemigosIA, null, this);
         this.physics.add.collider(this.grupoGusanosAzules, this.tilesPeligros, this.enemigosIA, null, this);
+
+        // Desactivamos el collider
+        this.colliderParedPinchos.active = false;
+
+
     }
 
     colisionesAgua () {
@@ -328,12 +333,13 @@ export default class EscenaColinas extends Phaser.Scene {
         this.UI.actualizarContadorMonedas(1);
     }
 
-    recolectarJoya() {
+    recolectarJoya(jugador, joya) {
         this.musicaFondo.stop();
+        joya.disableBody(true, true);
         this.sonidoItem.play({
             volume: 0.8,
         });
-        this.time.delayedCall (1000, () => {
+        this.time.delayedCall (1500, () => {
             this.sonidoVictoria.play();
             this.scene.pause();
         })
@@ -391,9 +397,8 @@ export default class EscenaColinas extends Phaser.Scene {
     }
 
     activarPalanca() {
-        this.tilesParedPinchos.setVisible(true)
-        this.tilesParedPinchos.setCollisionByExclusion([-1]);
-        this.tilesEscaleras.setVisible(true);
+        this.tilesParedPinchos.setVisible(true); // Hacemos visibles los tiles
+        this.colliderParedPinchos.active = true; // Activamos el collider
         this.arrayTrampolines.forEach(trampolin => {
             trampolin.setVisible(true); // Hacemos visible el trampolin
             trampolin.body.enable = true; // Habilitamos las fisicas del trampolin

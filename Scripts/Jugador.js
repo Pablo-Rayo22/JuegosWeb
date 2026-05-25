@@ -10,7 +10,6 @@ export default class Jugador extends Entidad {
         this.saltando = false;
         this.tiempoSalto = 0; // Tiempo que el jugador permanece en el aire (en milisegundos)
         this.tiempoMaximo = 100; // Tiempo máximo que puede permanecer el jugador en el aire (en milisegundos)
-        this.enEscalera = false;
         this.velocidadEscalando = 150;
         // Llamadas a metodos 
         // Controles
@@ -29,7 +28,6 @@ export default class Jugador extends Entidad {
     }
     // Comportamiento del jugador
     comportamiento () {
-        this.enEscalera = false //En cada frame comprobamos si el jugador está en una escalera
         this.mover();   
         this.saltar();    
         this.reproducirAnimacionesJugador();
@@ -149,10 +147,6 @@ export default class Jugador extends Entidad {
         }
     }
     reproducirAnimacionesJugador() {
-        if (this.enEscalera && (this.cursores.up.isDown || this.cursores.down.isDown)) {
-            this.play("spr_jugador_escalando", true);
-            return;
-        }
         if (!this.body.onFloor()) {
             this.play("spr_jugador_saltando", true);
             return;
