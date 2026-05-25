@@ -8,6 +8,9 @@ export default class UI {
         this.monedasRecolectadas = 0;
         this.textoMonedasRecolectadas;
         this.textoTiempo;
+        this.vidasIniciales = 3;
+        this.vidas = this.vidasIniciales;
+        this.textoVidas = null;
     }
     // Creamos el contador tiempo
     crearContadorTiempo(posicionX, posicionY, tiempo) { 
@@ -17,7 +20,23 @@ export default class UI {
         fontFamily: "arial, verdana",
         }).setScrollFactor(0);
     }
-    // Actualizamos el contador de tiempo
+    // Creamos los contadores
+    crearContadorMonedas(posicionX, posicionY) {
+        this.textoMonedasRecolectadas = this.escena.add.text(posicionX, posicionY, "Monedas: 0", { // Añadimos el texto a la escena
+            fontSize: "17.5px",
+            fill: "#000000",
+            fontFamily: "arial, verdana",
+        }).setScrollFactor(0);
+    }
+    crearContadorVidas(posicionX, posicionY) {
+        this.textoVidas = this.escena.add.text(posicionX, posicionY, "Vidas: 3", { // Añadimos el texto a la escena
+            fontSize: "17.5px",
+            fill: "#000000",
+            fontFamily: "arial, verdana",
+        }).setScrollFactor(0);
+    }
+
+    // Actualizamos los contadores
     actualizarContadorTiempo(delay, tiempo) {
         this.escena.time.addEvent({
             delay: delay, //En milisegundos
@@ -37,16 +56,6 @@ export default class UI {
             loop: true
         });
     }
-
-    // Creamos el contador de monedas
-    crearContadorMonedas(posicionX, posicionY) {
-        this.textoMonedasRecolectadas = this.escena.add.text(posicionX, posicionY, "Monedas: 0", { // Añadimos el texto a la escena
-            fontSize: "17.5px",
-            fill: "#000000",
-            fontFamily: "arial, verdana",
-        }).setScrollFactor(0);
-    } 
-    // Actualizamos el contador
     actualizarContadorMonedas(puntosMoneda) {
         if (this.monedasRecolectadas === undefined) {
             this.monedasRecolectadas = 0;
@@ -54,6 +63,16 @@ export default class UI {
         else {
             this.monedasRecolectadas += puntosMoneda;
             this.textoMonedasRecolectadas.setText("Monedas: " + this.monedasRecolectadas);
+        }
+    }
+    actualizarContadorVidas () {
+        if (this.vidas > 0) {
+            this.vidas--;
+            this.textoVidas.setText ("Vidas: " + this.vidas);
+        }
+        else {
+            this.escena.scene.restart();
+            this.vidas = this.vidasIniciales
         }
     }
 }

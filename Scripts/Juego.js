@@ -25,7 +25,7 @@ let config = {
         default: "arcade",
         arcade: {
             gravity: {y: GRAVEDAD},
-            debug: false,
+            debug: true,
         }
     }
 }

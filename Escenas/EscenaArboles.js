@@ -233,6 +233,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         this.UI.crearContadorTiempo(20, 90, this.tiempo);
         this.UI.actualizarContadorTiempo(this.delay, this.tiempo);
         this.UI.crearContadorMonedas(750, 90);
+        this.UI.crearContadorVidas(20, 120);
     }
     //
     /************************ COLISIONES ***********************/
@@ -281,6 +282,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
     colisionesObjetosRecolectables () {    
         this.physics.add.overlap(this.jugador, this.grupoJoyas, this.recolectarJoya, null, this); 
         this.physics.add.overlap(this.jugador, this.grupoMonedas, this.recolectarMonedas, null, this);
+        this.physics.overlap (this.jugador, this.grupoOrbesVida, this.recolectarVidas, null, this);
     }
     // Colisiones con objetos interactivos
     colisionesObjetosInteractivos() {
@@ -322,7 +324,6 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
             this.scene.pause();
         })
         this.time.delayedCall (0, () => {
-
             this.scene.start("EscenaColinas");
         })
     }
@@ -330,6 +331,10 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         this.sonidoMoneda.play();
         moneda.disableBody(true, true);
         this.UI.actualizarContadorMonedas(1);
+    }
+    recolectarVidas (jugador, orbeVida) {
+        this.UI.actualizarContadorVidas();
+        orbeVida.disableBody(true, true);
     }
     // Metodo para matar a los enemigos cuando saltamos encima de ellos
     matarEnemigos (jugador, enemigo) {
@@ -348,8 +353,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
     // Metodo para controlar la logica de morir del jugador
     morir() {
         this.sonidoMuerteJugador.play(); // Reproducimos el sonido cuando el jugador muere
-        this.musicaFondo.stop(); // Detenemos la musica
-        this.reiniciarEscena();
+        this.restarVidas();
     }
     // Golpear bloques
     golpearBloque(jugador, tile) {
@@ -396,6 +400,22 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
     activarTrampolin(jugador, trampolin) {
         trampolin.activarTrampolin(jugador); // Llamamos al metodo de la clase Trampolin
     }
+
+    restarVidas () {
+        this.UI.actualizarContadorVidas();
+        if (this.UI.vidas > 0) {
+            this.jugador.setPosition (
+                this.jugador.posicionInicial.x,
+                this.jugador.posicionInicial.y,
+            )
+            this.musicaFondo.stop()
+            this.jugador.setVelocity(0, 0);
+            this.time.delayedCall (500, () => {
+                this.musicaFondo.play();
+            })
+        }
+    }
+
    enemigosIA(enemigo) {
         if (enemigo.body.blocked.left || enemigo.body.blocked.right) { // Si el enemigo está siendo bloqueado por algo lateralmente
             // Invertimos la dirección lógica del enemigo
