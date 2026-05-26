@@ -4,7 +4,7 @@ import Entidad from "./Entidad.js"
 export default class Jugador extends Entidad {
     // Metodos
     constructor (escena, x, y) {
-        super(escena, x, y, "spr_jugador", "spr_jugador_de_frente1");
+        super(escena, x, y, "spr_jugador", "spr_jugador_quieto1");
         // Variables
         this.velocidadEjeX = 200; // Velocidad del jugador
         this.fuerzaDeSalto = -560; // Cuanto de alto puede saltar
@@ -179,11 +179,11 @@ export default class Jugador extends Entidad {
             this.escena.anims.create(this.animacionAndar);
         }
        
-        if (!this.escena.anims.exists("spr_jugador_de_frente")) {
+        if (!this.escena.anims.exists("spr_jugador_quieto")) {
             this.animacionFrente = {} 
-            this.animacionFrente.key = "spr_jugador_de_frente";
+            this.animacionFrente.key = "spr_jugador_quieto";
             this.animacionFrente.frames = this.escena.anims.generateFrameNames ("spr_jugador", {
-                prefix: "spr_jugador_de_frente",
+                prefix: "spr_jugador_quieto",
                 start: 1,
                 end: 1,
             });
@@ -229,7 +229,7 @@ export default class Jugador extends Entidad {
             return;
         }
         else {
-            this.play("spr_jugador_de_frente", true);
+            this.play("spr_jugador_quieto", true);
         }
     }  
 }

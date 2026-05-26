@@ -1,5 +1,5 @@
 import Enemigo from "./Enemigo.js";
-
+// export default es para poder importar la clase en otros ficheros .js
 export default class PezAzul extends Enemigo {
     constructor(escena, x, y, jugador) {
         super(escena, x, y, jugador, "spr_pez_azul", "spr_pez_azul_nadando1");
