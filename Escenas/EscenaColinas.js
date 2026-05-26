@@ -76,7 +76,7 @@ export default class EscenaColinas extends Phaser.Scene {
         // Orbes vida
         this.load.image ("orbeVida", "Assets/Imagenes/Sprites/Objetos/Recolectables/OrbesVida/orbeVida.png");
         // Joya
-        this.load.image ("joyaverde", "Assets/Imagenes/Sprites/Objetos/Recolectables/Joyas/joyaVerde.png")
+        this.load.image ("joyaVerde", "Assets/Imagenes/Sprites/Objetos/Recolectables/Joyas/joyaVerde.png")
 
         // Objetos interactivos
         // Palanca
@@ -173,7 +173,7 @@ export default class EscenaColinas extends Phaser.Scene {
     }
     // Creamos al jugador en la escena
     crearJugador() {
-        this.jugador = new Jugador (this, 2536 - 64, 460);
+        this.jugador = new Jugador (this, 130, 530);
     }
 
     crearEnemigos() {
@@ -209,7 +209,7 @@ export default class EscenaColinas extends Phaser.Scene {
         this.grupoOrbesVida = this.physics.add.group();
 
         this.objetosJoya.forEach(recolectable => {
-            let joya = new Joya (this, recolectable.x, recolectable.y, "verde");
+            let joya = new Joya (this, recolectable.x, recolectable.y, "Verde");
             this.grupoJoyas.add(joya);
             joya.setVisible(false); // Ocultamos la joya
             joya.body.enable = false; // Quitamos colision a la joya
@@ -350,10 +350,6 @@ export default class EscenaColinas extends Phaser.Scene {
         this.UI.actualizarContadorVidas(1);
 
         orbeVida.disableBody(true, true);
-
-        if (this.UI.monedasRecolectadas %50) {
-            this.UI.actualizarContadorVidas(1);
-        }
     }
     // Metodo para matar a los enemigos cuando saltamos encima de ellos
     matarEnemigos (jugador, enemigo) {

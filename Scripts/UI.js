@@ -11,6 +11,7 @@ export default class UI {
         this.vidasIniciales = 3;
         this.vidas = this.vidasIniciales;
         this.textoVidas = null;
+        this.siguienteVida = 50;
     }
     // Creamos el contador tiempo
     crearContadorTiempo(posicionX, posicionY, tiempo) { 
@@ -63,6 +64,10 @@ export default class UI {
         else {
             this.monedasRecolectadas += puntosMoneda;
             this.textoMonedasRecolectadas.setText("Monedas: " + this.monedasRecolectadas);
+            if (this.monedasRecolectadas >= this.siguienteVida) {
+                this.actualizarContadorVidas(1);
+                this.siguienteVida += 50;
+            }
         }
     }
     actualizarContadorVidas (puntosVida) {

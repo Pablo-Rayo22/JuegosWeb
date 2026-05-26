@@ -344,10 +344,6 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         this.sonidoMoneda.play();
         moneda.disableBody(true, true);
         this.UI.actualizarContadorMonedas(1);
-        if (this.UI.monedasRecolectadas %50 === 0) {
-            this.UI.actualizarContadorVidas(1);
-            this.UI.monedasRecolectadas = 0; // Resetamos el contador;
-        }
     }
     recolectarVidas (jugador, orbeVida) {
         this.UI.actualizarContadorVidas(1);
@@ -432,6 +428,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
             );
 
             this.jugador.enableBody(true, this.jugador.posicionInicial.x, this.jugador.posicionInicial.y, true, true);
+            this.musicaFondo.stop();
             this.time.delayedCall (100, () => {
                 this.musicaFondo.play();
             })
