@@ -9,6 +9,7 @@ import Joya from "../Scripts/Joya.js";
 import Palanca from "../Scripts/Palanca.js";
 import Trampolin from "../Scripts/Trampolin.js";
 import UI from "../Scripts/UI.js";
+// export default es para poder importar la clase en otros ficheros .js
 export default class EscenaColinas extends Phaser.Scene {
     constructor() {
         super("EscenaColinas")
@@ -67,12 +68,13 @@ export default class EscenaColinas extends Phaser.Scene {
 
         // Agua
         this.load.image ("agua", "Assets/Imagenes/Sprites/Tileset/Agua/agua.png");
-        this.load.atlas ("spr_agua", "Assets/Imagenes/Sprites/Tileset/Agua/spr_agua.png", "Assets/Imagenes/Sprites/Tileset/Agua/spr_agua_atlas.json");
 
         // Objetos recolectables
         // Monedas
         this.load.image("moneda", "Assets/Imagenes/Sprites/Objetos/Recolectables/Monedas/monedaOro.png");
         this.load.atlas("spr_moneda_oro", "Assets/Imagenes/Sprites/Objetos/Recolectables/Monedas/spr_moneda_oro.png", "Assets/Imagenes/Sprites/Objetos/Recolectables/Monedas/spr_moneda_oro_atlas.json");
+        // Orbes vida
+        this.load.image ("orbeVida", "Assets/Imagenes/Sprites/Objetos/Recolectables/OrbesVida/orbeVida.png");
         // Joya
         this.load.image ("joyaverde", "Assets/Imagenes/Sprites/Objetos/Recolectables/Joyas/joyaVerde.png")
 
@@ -163,6 +165,7 @@ export default class EscenaColinas extends Phaser.Scene {
         // Objetos recolectables
         this.objetosJoya = this.mapa.getObjectLayer ("joya").objects
         this.objetosMoneda = this.mapa.getObjectLayer ("monedas").objects;
+        this.objetosOrbesVida = this.mapa.getObjectLayer("orbesVida").objects;
 
         // Objetos interactivos
         this.objetosPalanca = this.mapa.getObjectLayer ("palancas").objects;
@@ -170,7 +173,7 @@ export default class EscenaColinas extends Phaser.Scene {
     }
     // Creamos al jugador en la escena
     crearJugador() {
-        this.jugador = new Jugador (this, 130, 530);
+        this.jugador = new Jugador (this, 2536 - 64, 460);
     }
 
     crearEnemigos() {
@@ -203,6 +206,7 @@ export default class EscenaColinas extends Phaser.Scene {
         // Creamos grupos para luego recorrerlos
         this.grupoJoyas = this.physics.add.group();
         this.grupoMonedas = this.physics.add.group();
+        this.grupoOrbesVida = this.physics.add.group();
 
         this.objetosJoya.forEach(recolectable => {
             let joya = new Joya (this, recolectable.x, recolectable.y, "verde");
@@ -214,6 +218,11 @@ export default class EscenaColinas extends Phaser.Scene {
             let moneda = new Moneda (this, recolectable.x, recolectable.y);
             this.grupoMonedas.add(moneda);
         });
+        this.objetosOrbesVida.forEach (recolectable => {
+            let orbeVida = new OrbeVida (this, recolectable.x, recolectable.y);
+
+            this.grupoOrbesVida.add(orbeVida);
+        })
     }
 
     crearInteractivos () {
@@ -271,8 +280,6 @@ export default class EscenaColinas extends Phaser.Scene {
 
         // Desactivamos el collider
         this.colliderParedPinchos.active = false;
-
-
     }
 
     colisionesAgua () {
@@ -296,6 +303,7 @@ export default class EscenaColinas extends Phaser.Scene {
     colisionesObjetosRecolectables () {
         this.physics.add.overlap (this.jugador, this.grupoMonedas, this.recolectarMonedas, null, this);
         this.physics.add.overlap (this.jugador, this.grupoJoyas, this.recolectarJoya, null, this);
+        this.physics.add.overlap (this.jugador, this.grupoOrbesVida, this.recolectarVidas, null, this);
     }
 
     colisionesObjetosInteractivos () {
@@ -338,6 +346,15 @@ export default class EscenaColinas extends Phaser.Scene {
         })
     }
 
+    recolectarVidas (jugador, orbeVida) {
+        this.UI.actualizarContadorVidas(1);
+
+        orbeVida.disableBody(true, true);
+
+        if (this.UI.monedasRecolectadas %50) {
+            this.UI.actualizarContadorVidas(1);
+        }
+    }
     // Metodo para matar a los enemigos cuando saltamos encima de ellos
     matarEnemigos (jugador, enemigo) {
         // Si saltamos sobre el enemigo lo matamos
@@ -385,13 +402,17 @@ export default class EscenaColinas extends Phaser.Scene {
     }
 
     restarVidas () {
-        this.UI.actualizarContadorVidas();
+        this.UI.actualizarContadorVidas(-1);
         if (this.UI.vidas > 0) {
             this.jugador.setPosition (
                 this.jugador.posicionInicial.x,
                 this.jugador.posicionInicial.y,
             )
             this.jugador.setVelocity(0, 0)
+            this.musicaFondo.stop();
+            this.time.delayedCall (100, () => {
+                this.musicaFondo.play();
+            })
         }
     }
 

@@ -231,18 +231,6 @@
                  "width":64,
                  "x":3680,
                  "y":160
-                }, 
-                {
-                 "height":64,
-                 "id":108,
-                 "name":"",
-                 "opacity":1,
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":64,
-                 "x":1024,
-                 "y":96
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -491,6 +479,41 @@
                  "width":64,
                  "x":3680,
                  "y":544
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":19,
+         "name":"orbesVida",
+         "objects":[
+                {
+                 "height":64,
+                 "id":75,
+                 "name":"",
+                 "opacity":1,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":64,
+                 "x":2240,
+                 "y":192
+                }, 
+                {
+                 "height":64,
+                 "id":86,
+                 "name":"",
+                 "opacity":1,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":64,
+                 "x":1024,
+                 "y":64
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -752,8 +775,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":28,
- "nextobjectid":109,
+ "nextlayerid":29,
+ "nextobjectid":108,
  "orientation":"orthogonal",
  "renderorder":"left-down",
  "tiledversion":"1.12.1",

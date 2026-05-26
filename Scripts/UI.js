@@ -65,9 +65,9 @@ export default class UI {
             this.textoMonedasRecolectadas.setText("Monedas: " + this.monedasRecolectadas);
         }
     }
-    actualizarContadorVidas () {
+    actualizarContadorVidas (puntosVida) {
         if (this.vidas > 0) {
-            this.vidas--;
+            this.vidas += puntosVida;
             this.textoVidas.setText ("Vidas: " + this.vidas);
         }
         else {

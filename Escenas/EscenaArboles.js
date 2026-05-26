@@ -47,6 +47,10 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         this.jugador.update();
         this.arrayPalancas.forEach(palanca => palanca.update());
         this.arrayTrampolines.forEach(trampolin => trampolin.update());
+
+        if (this.jugador.y > this.mapa.heightInPixels + 200) {
+            this.morir();
+        }
         
     }
     // Cargamos las imagenes del juego
@@ -75,6 +79,8 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         // Monedas
         this.load.image("moneda", "Assets/Imagenes/Sprites/Objetos/Recolectables/Monedas/monedaOro.png");
         this.load.atlas("spr_moneda_oro", "Assets/Imagenes/Sprites/Objetos/Recolectables/Monedas/spr_moneda_oro.png", "Assets/Imagenes/Sprites/Objetos/Recolectables/Monedas/spr_moneda_oro_atlas.json");
+        // Orbes vida
+        this.load.image ("orbeVida", "Assets/Imagenes/Sprites/Objetos/Recolectables/OrbesVida/orbeVida.png");
 
         // Objetos interactivos
         // Palanca
@@ -165,6 +171,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         // Objetos recolectables
         this.objetosJoya = this.mapa.getObjectLayer ("joya").objects;
         this.objetosMoneda = this.mapa.getObjectLayer ("monedas").objects;
+        this.objetosOrbesVida = this.mapa.getObjectLayer("orbesVida").objects;
         // Objetos interactivos
         this.objetosPalanca = this.mapa.getObjectLayer ("palancas").objects;
         this.objetosTrampolin = this.mapa.getObjectLayer ("trampolines").objects;
@@ -199,6 +206,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         // Creamos grupos para luego recorrerlos
         this.grupoJoyas = this.physics.add.group();
         this.grupoMonedas = this.physics.add.group();
+        this.grupoOrbesVida = this.physics.add.group();
 
         this.objetosJoya.forEach(recolectable => {
             let joya = new Joya (this, recolectable.x, recolectable.y, "Azul");
@@ -210,6 +218,11 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
             let moneda = new Moneda (this, recolectable.x, recolectable.y);
             this.grupoMonedas.add(moneda);
         });
+        this.objetosOrbesVida.forEach (recolectable => {
+            let orbeVida = new OrbeVida (this, recolectable.x, recolectable.y);
+
+            this.grupoOrbesVida.add(orbeVida);
+        })
     }
     //
     // Creamos los objetos interactivos
@@ -282,7 +295,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
     colisionesObjetosRecolectables () {    
         this.physics.add.overlap(this.jugador, this.grupoJoyas, this.recolectarJoya, null, this); 
         this.physics.add.overlap(this.jugador, this.grupoMonedas, this.recolectarMonedas, null, this);
-        this.physics.overlap (this.jugador, this.grupoOrbesVida, this.recolectarVidas, null, this);
+        this.physics.add.overlap (this.jugador, this.grupoOrbesVida, this.recolectarVidas, null, this);
     }
     // Colisiones con objetos interactivos
     colisionesObjetosInteractivos() {
@@ -304,7 +317,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         0,
         0,
         this.mapa.widthInPixels,
-        this.mapa.heightInPixels
+        this.mapa.heightInPixels + 500
         );
     }
 
@@ -331,10 +344,17 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         this.sonidoMoneda.play();
         moneda.disableBody(true, true);
         this.UI.actualizarContadorMonedas(1);
+        if (this.UI.monedasRecolectadas %50 === 0) {
+            this.UI.actualizarContadorVidas(1);
+            this.UI.monedasRecolectadas = 0; // Resetamos el contador;
+        }
     }
     recolectarVidas (jugador, orbeVida) {
-        this.UI.actualizarContadorVidas();
+        this.UI.actualizarContadorVidas(1);
+
         orbeVida.disableBody(true, true);
+
+        this.sonidoItem.play();
     }
     // Metodo para matar a los enemigos cuando saltamos encima de ellos
     matarEnemigos (jugador, enemigo) {
@@ -402,15 +422,17 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
     }
 
     restarVidas () {
-        this.UI.actualizarContadorVidas();
+        this.UI.actualizarContadorVidas(-1);
         if (this.UI.vidas > 0) {
-            this.jugador.setPosition (
-                this.jugador.posicionInicial.x,
-                this.jugador.posicionInicial.y,
-            )
-            this.musicaFondo.stop()
-            this.jugador.setVelocity(0, 0);
-            this.time.delayedCall (500, () => {
+            this.jugador.disableBody(true, false);
+
+            this.jugador.setPosition(
+            this.jugador.posicionInicial.x,
+            this.jugador.posicionInicial.y
+            );
+
+            this.jugador.enableBody(true, this.jugador.posicionInicial.x, this.jugador.posicionInicial.y, true, true);
+            this.time.delayedCall (100, () => {
                 this.musicaFondo.play();
             })
         }
