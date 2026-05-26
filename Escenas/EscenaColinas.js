@@ -348,8 +348,8 @@ export default class EscenaColinas extends Phaser.Scene {
 
     recolectarVidas (jugador, orbeVida) {
         this.UI.actualizarContadorVidas(1);
-
         orbeVida.disableBody(true, true);
+        this.sonidoItem.play();
     }
     // Metodo para matar a los enemigos cuando saltamos encima de ellos
     matarEnemigos (jugador, enemigo) {
