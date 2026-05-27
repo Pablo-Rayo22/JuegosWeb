@@ -8,12 +8,13 @@ import Sierra from "../Scripts/Sierra.js";
 import Palanca from "../Scripts/Palanca.js";
 import Trampolin from "../Scripts/Trampolin.js";
 import UI from "../Scripts/UI.js";
+import GameOver from "./EscenaGameOver.js";
 
 // export default es para poder importar la clase en otros ficheros .js
 export default class EscenaArboles extends Phaser.Scene { // Escena 1
     // Metodos
     constructor() {
-        super("EscenaArboles");
+        super("escenaArboles");
 
         // Variables
         this.tiempo = 350; // Tiempo de la escena
@@ -22,6 +23,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
     //
     init() { // Metodo para inicializar o instanciar cuando carga el juego y cada vez que se recarga este
         this.UI = new UI(this);
+        this.gameOver = new GameOver ();
     }
     // Precarga de recursos
     preload() {
@@ -40,7 +42,6 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         this.crearContadores();
         this.crearColisiones();
         this.controlarCamara();
-        
     }
     // Actualizamos el juegos 60 veces por segundo
     update() {
@@ -178,7 +179,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
     }
     // Creamos al jugador en la escena
     crearJugador() {
-        this.jugador = new Jugador (this, 130, 530);
+        this.jugador = new Jugador (this, 2600, 64);
     }
     //
     // Creamos los enemigos
@@ -337,7 +338,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
             this.scene.pause();
         })
         this.time.delayedCall (0, () => {
-            this.scene.start("EscenaColinas");
+            this.scene.start("EscenaVictoria");
         })
     }
     recolectarMonedas(jugador, moneda) {

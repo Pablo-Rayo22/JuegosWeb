@@ -12,7 +12,7 @@ import UI from "../Scripts/UI.js";
 // export default es para poder importar la clase en otros ficheros .js
 export default class EscenaColinas extends Phaser.Scene {
     constructor() {
-        super("EscenaColinas")
+        super("escenaColinas")
         // Variables 
         this.tiempo = 350;
         this.delay = 750;
@@ -173,7 +173,7 @@ export default class EscenaColinas extends Phaser.Scene {
     }
     // Creamos al jugador en la escena
     crearJugador() {
-        this.jugador = new Jugador (this, 130, 530);
+        this.jugador = new Jugador (this, 3260, 64);
     }
 
     crearEnemigos() {
@@ -340,9 +340,9 @@ export default class EscenaColinas extends Phaser.Scene {
         this.sonidoItem.play({
             volume: 0.8,
         });
-        this.time.delayedCall (1500, () => {
-            this.sonidoVictoria.play();
-            this.scene.pause();
+        this.time.delayedCall (1000, () => {
+            this.sonidoGolpeBloque.stop();
+            this.scene.start("victoria");
         })
     }
 

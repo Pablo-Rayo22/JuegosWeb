@@ -8,10 +8,10 @@ export default class UI {
         this.monedasRecolectadas = 0;
         this.textoMonedasRecolectadas;
         this.textoTiempo;
-        this.vidasIniciales = 3;
+        this.vidasIniciales = 1;
         this.vidas = this.vidasIniciales;
         this.textoVidas = null;
-        this.siguienteVida = 50;
+        this.siguienteVida = 50; // Para indicar cada cuantas monedas se suma la siguiente vida.
     }
     // Creamos el contador tiempo
     crearContadorTiempo(posicionX, posicionY, tiempo) { 
@@ -76,7 +76,7 @@ export default class UI {
             this.textoVidas.setText ("Vidas: " + this.vidas);
         }
         else {
-            this.escena.scene.restart();
+            this.escena.scene.start("EscenaGameOver");
             this.vidas = this.vidasIniciales
         }
     }
