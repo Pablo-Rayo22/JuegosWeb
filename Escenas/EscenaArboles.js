@@ -19,15 +19,17 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         this.tiempo = 350; // Tiempo de la escena
         this.delay = 750; // Cada cuantos milisegundos disminuye una unidad de tiempo
     }
-    //
+    
     init() { // Metodo para inicializar o instanciar cuando carga el juego y cada vez que se recarga este
         this.UI = new UI(this);
     }
+    
     // Precarga de recursos
     preload() {
        this.cargarImagenes();
        this.cargarSonidos();
     }
+    
     // Creamos recursos
     create() {
         this.aniadirSonidos();
@@ -40,8 +42,8 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         this.crearContadores();
         this.crearColisiones();
         this.controlarCamara();
-        
     }
+    
     // Actualizamos el juegos 60 veces por segundo
     update() {
         this.jugador.update();
@@ -51,8 +53,8 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         if (this.jugador.y > this.mapa.heightInPixels + 200) {
             this.morir();
         }
-        
     }
+    
     // Cargamos las imagenes del juego
     cargarImagenes() {
         // Fondo
@@ -93,9 +95,13 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         // Mapa
         this.load.tilemapTiledJSON("mapa", "Assets/Imagenes/Mapas/mapa.tmj");
         
-        //Tiles
+        // Tiles
         this.load.image("tilesheet", "Assets/Imagenes/Sprites/Tileset/tiles.png");
+
+        // Carga de la textura para los elementos visuales de vida de la UI
+        this.load.image("spr_vida_icono", "Assets/Imagenes/Sprites/UI/Heart1.png");
     }
+
     // Cargamos los sonidos del juego
     cargarSonidos() {
         this.load.audio("sonidoItem", "Assets/Sonidos/conseguirItem.ogg");
@@ -133,6 +139,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         this.sonidoTrampolin = this.sound.add ("sonidoTrampolin");
         this.musicaFondo.play();
     }
+
     // Creamos el fondo
     crearFondo () {
         this.fondoArboles = this.add.image(0, 0, "arboles").setOrigin(0, 0).setScrollFactor(0);
@@ -140,6 +147,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         this.scale.width / this.fondoArboles.width,
         this.scale.height / this.fondoArboles.height);
     }
+
     // Creamos el mapa de Tiled
     crearMapa() {
         this.mapa = this.make.tilemap({key: "mapa"})
@@ -151,6 +159,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         this.tilesPeligros.setCollisionByExclusion([-1]);
         this.tilesSuelo.setCollisionByExclusion([-1]);
     }
+
     // Creamos las capas de patrones que vienen de Tiled
     crearCapasTiles() {
         this.tilesSuelo = this.mapa.createLayer ("suelo", this.hojaTiles, 0, 0);
@@ -162,6 +171,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         this.tilesPinchosPuente = this.mapa.createLayer("pinchosPuente", this.hojaTiles, 0, 0).setVisible(false); // Hacemos invisibles los tiles
         this.tilesPlataformaJoya = this.mapa.createLayer("plataformaJoya", this.hojaTiles, 0, 0).setVisible(false); // Hacemos invisibles los tiles
     }
+
     // Creamos las capas de objetos que vienen de Tiled
     crearCapasObjetos() {
         // Objetos enemigos
@@ -176,11 +186,12 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         this.objetosPalanca = this.mapa.getObjectLayer ("palancas").objects;
         this.objetosTrampolin = this.mapa.getObjectLayer ("trampolines").objects;
     }
+
     // Creamos al jugador en la escena
     crearJugador() {
         this.jugador = new Jugador (this, 130, 530);
     }
-    //
+
     // Creamos los enemigos
     crearEnemigos() {
         this.grupoCaracoles = this.physics.add.group({runChildUpdate: true});
@@ -200,7 +211,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
             this.grupoSierras.add(sierra);
         });
     }
-    //
+
     // Creamos los objetos recolectables
     crearRecolectables() {
         // Creamos grupos para luego recorrerlos
@@ -220,11 +231,10 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         });
         this.objetosOrbesVida.forEach (recolectable => {
             let orbeVida = new OrbeVida (this, recolectable.x, recolectable.y);
-
             this.grupoOrbesVida.add(orbeVida);
         })
     }
-    //
+
     // Creamos los objetos interactivos
     crearInteractivos () {
         // Creamos arrays para luego recorrerlos
@@ -241,14 +251,17 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
             trampolin.body.enable = false; // Deshabilitamos las fisicas
         });
     }
+
     // Creamos contadores de UI
     crearContadores() {
-        this.UI.crearContadorTiempo(20, 90, this.tiempo);
+        // Organizados estructuralmente en pantalla
+        this.UI.crearContadorMonedas(20, 20);
+        this.UI.crearContadorTiempo(20, 50, this.tiempo);
+        this.UI.crearContadorVidas(20, 80);
+        
         this.UI.actualizarContadorTiempo(this.delay, this.tiempo);
-        this.UI.crearContadorMonedas(750, 90);
-        this.UI.crearContadorVidas(20, 120);
     }
-    //
+
     /************************ COLISIONES ***********************/
     crearColisiones() {
         this.colisionesSuelo();
@@ -258,12 +271,14 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         this.colisionesObjetosRecolectables();     
         this.colisionesObjetosInteractivos();
     }
+
     // Colisiones con suelo
     colisionesSuelo() {
         this.physics.add.collider(this.jugador, this.tilesSuelo);
         this.physics.add.collider(this.grupoCaracoles, this.tilesSuelo);
         this.physics.add.collider(this.grupoGusanosAzules, this.tilesSuelo);
     }
+
     // Colisiones con plataformas
     colisionesPlataformas() {
         this.physics.add.collider (this.jugador, this.tilesPlataformas, this.golpearBloque, null, this);
@@ -275,15 +290,16 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         this.physics.add.collider(this.grupoCaracoles, this.tilesPlataformas, (enemigo) => this.enemigosIA(enemigo), null, this);
         this.physics.add.collider(this.grupoGusanosAzules, this.tilesPlataformas, (enemigo) => this.enemigosIA(enemigo), null, this);
     }
+
     // Colisiones con peligros
     colisionesPeligros() {
         this.physics.add.collider(this.jugador, this.tilesPeligros, this.morir, null, this);
         this.physics.add.collider(this.jugador, this.tilesPinchosPuente, this.morir, null, this);
 
-
         this.physics.add.collider(this.grupoCaracoles, this.tilesPinchosPuente, (enemigo) => this.enemigosIA(enemigo), null, this);
         this.physics.add.collider(this.grupoGusanosAzules, this.tilesPinchosPuente, (enemigo) => this.enemigosIA(enemigo), null, this);
     }
+
     // Colisiones con enemigos
     colisionesEnemigos() {
         this.physics.add.collider(this.grupoCaracoles, this.grupoGusanosAzules);
@@ -291,12 +307,14 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         this.physics.add.overlap(this.jugador, this.grupoGusanosAzules, this.matarEnemigos, null, this);
         this.physics.add.overlap (this.jugador, this.grupoSierras, this.morir, null, this);
     }
+
     // Colisiones con objetos recolectables
     colisionesObjetosRecolectables () {    
         this.physics.add.overlap(this.jugador, this.grupoJoyas, this.recolectarJoya, null, this); 
         this.physics.add.overlap(this.jugador, this.grupoMonedas, this.recolectarMonedas, null, this);
         this.physics.add.overlap (this.jugador, this.grupoOrbesVida, this.recolectarVidas, null, this);
     }
+
     // Colisiones con objetos interactivos
     colisionesObjetosInteractivos() {
         this.physics.add.overlap(this.jugador, this.arrayTrampolines, this.activarTrampolin, null, this);
@@ -324,6 +342,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
     reiniciarEscena() { // Reiniciamos la escena
         this.scene.restart(); 
     }
+
     // Recolección de objetos
     recolectarJoya(jugador, joya) {
         joya.disableBody(true, true); // Deshabilitamos la joya
@@ -340,18 +359,19 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
             this.scene.start("EscenaColinas");
         })
     }
+
     recolectarMonedas(jugador, moneda) {
         this.sonidoMoneda.play();
         moneda.disableBody(true, true);
         this.UI.actualizarContadorMonedas(1);
     }
+
     recolectarVidas (jugador, orbeVida) {
         this.UI.actualizarContadorVidas(1);
-
         orbeVida.disableBody(true, true);
-
         this.sonidoItem.play();
     }
+
     // Metodo para matar a los enemigos cuando saltamos encima de ellos
     matarEnemigos (jugador, enemigo) {
         // Si saltamos sobre el enemigo lo matamos
@@ -366,11 +386,13 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
             this.morir(); // El jugador muere
         }
     }
+
     // Metodo para controlar la logica de morir del jugador
     morir() {
         this.sonidoMuerteJugador.play(); // Reproducimos el sonido cuando el jugador muere
         this.restarVidas();
     }
+
     // Golpear bloques
     golpearBloque(jugador, tile) {
         let golpe = false; // Variable para controlar si ya hemos activado el bloque de monedas
@@ -389,6 +411,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
             this.UI.actualizarContadorMonedas(1);
         }
     }
+
     activarBloqueMoneda(tile) {
         this.tilesPlataformas.putTileAt(
         2, // Corresponde al segundo tile que esta en la tilesheet empezando por arriba y siguiendo de izquierda a derecha.
@@ -397,6 +420,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         );
         this.tilesPlataformas.setCollisionByExclusion([-1]); // Activamos la colision del nuevo bloque
     }
+
     activarPalanca() {
         this.tilesPuente.setVisible(true); // Hacemos visible el puente
         this.tilesPuente.setCollisionByExclusion([-1]); // Habilitamos las fisicas del puente
@@ -413,6 +437,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
             joya.body.enable = true; // Activamos colision a la joya
         });
     }
+
     activarTrampolin(jugador, trampolin) {
         trampolin.activarTrampolin(jugador); // Llamamos al metodo de la clase Trampolin
     }
