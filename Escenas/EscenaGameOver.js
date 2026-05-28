@@ -9,13 +9,15 @@ export default class EscenaGameOver extends Phaser.Scene {
     }
     // Precargamos los recursos
     preload () {
-        this.load.image("gameOver", "Assets/Imagenes/FinJuego/gameOver.jpg");
+        this.load.image("gameOver", "Assets/Imagenes/FinJuego/gameOver.png");
+        // this.load.image("fondo", "Assets/Imagenes/Finjuego/fondo.jpg");
         this.load.audio("sonidoGameOver", "Assets/Sonidos/gameOver.ogg")
-        this.botonReinciar.cargarBotonReiniciar
+        this.botonReinciar.cargarBotonReiniciar();
     }
     // Cargamos los recursos
     create() {
-        this.gameOver = this.add.image (0, 0, "gameOver").setOrigin (0, 0).setScale(4.5, 4.5);
+        this.imagenGameOver = this.add.image (675, 120, "gameOver").setOrigin (0.5, 0.5).setScale(2).setDepth(10);
+        // this.imagenFondo = this.add.image (0, 0, "fondo").setOrigin (0, 0).setScale(10);
         this.sonidoGameOver = this.sound.add("sonidoGameOver");
         this.sonidoGameOver.play();
         this.botonReinciar.crearBotonReinciar();

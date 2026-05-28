@@ -9,15 +9,18 @@ export default class EscenaVictoria extends Phaser.Scene {
     }
     // Precargamos los recursos
     preload () {
-        this.load.image("victoria", "Assets/Imagenes/FinJuego/victoria.jpg");
-        this.load.audio("sonidoVictoria", "Assets/Sonidos/victoria.ogg")
+        this.load.image("victoria", "Assets/Imagenes/FinJuego/victoria.png");
+        //this.load.image("fondo", "Assets/Imagenes/Finjuego/fondo.jpg");
+        this.load.audio("sonidoVictoria", "Assets/Sonidos/victoria.ogg");
         this.botonReinciar.cargarBotonReiniciar();
     }
     // Cargamos los recursos
     create() {
-        this.victoria = this.add.image (0, 0, "victoria").setOrigin (0, 0).setScale(3.9375, 3.9375);
+        this.imagenVictoria = this.add.image (675, 120, "victoria").setOrigin (0.5, 0.5).setScale(2).setDepth(5);
+        // this.imagenFondo = this.add.image (0, 0, "fondo").setOrigin (0, 0).setScale(10);
         this.sonidoVictoria = this.sound.add("sonidoVictoria");
-        this.sound.play("sonidoVictoria");
+        this.sonidoVictoria.play();
         this.botonReinciar.crearBotonReinciar();
+
     }
 }

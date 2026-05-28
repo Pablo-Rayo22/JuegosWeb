@@ -37,14 +37,14 @@ export default class UI {
 
     // Modificado para pintar también las imágenes de los corazones al inicio
     crearContadorVidas(posicionX, posicionY) {
-        this.textoVidas = this.escena.add.text(posicionX, posicionY, "Vidas: " + this.vidas, { 
+        this.textoVidas = this.escena.add.text(posicionX, posicionY, { 
             fontSize: "17.5px",
             fill: "#000000",
             fontFamily: "arial, verdana",
         }).setScrollFactor(0);
 
         // Desfase para alinear los corazones con el texto
-        this.dibujarCorazones(posicionX + 70, posicionY + -8);
+        this.dibujarCorazones(posicionX, posicionY);
     }
 
     // Función para renderizar los corazones de forma dinámica
@@ -108,6 +108,7 @@ export default class UI {
             if (this.monedasRecolectadas >= this.siguienteVida) {
                 this.actualizarContadorVidas(1);
                 this.siguienteVida += 50;
+                this.escena.sonidoVida.play();
             }
         }
     }
@@ -121,19 +122,22 @@ export default class UI {
         this.vidas += puntosVida;
 
         if (this.vidas > 0) {
-            if (this.textoVidas) this.textoVidas.setText("Vidas: " + this.vidas);
+            //if (this.textoVidas) this.textoVidas.setText("Vidas: " + this.vidas);
             
             // Sincronización de posición con los valores iniciales de la creación
-            let posX = this.textoVidas ? this.textoVidas.x + 72 : 20;
-            let posY = this.textoVidas ? this.textoVidas.y + 2 : 20;
+            let posX;
+            let posY;
+            if (this.textoVidas) {
+                posX = this.textoVidas.x;
+                posY = this.textoVidas.y;
+            }
             this.dibujarCorazones(posX, posY);
         }
         else {
             if (this.textoVidas) this.textoVidas.setText("Vidas: 0");
             this.grupoVidasVisuales.clear(true, true); 
-            
-            // Reiniciar escena en caso de Game Over
-            this.escena.scene.restart();
+            console.log ("¡GAME OVER!")
+            this.escena.scene.start ("escenaGameOver");
             this.vidas = this.vidasIniciales;
         }
     }
