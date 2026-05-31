@@ -11,6 +11,10 @@ export default class Jugador extends Entidad {
         this.saltando = false;
         this.tiempoSalto = 0; // Tiempo que el jugador permanece en el aire (en milisegundos)
         this.tiempoMaximo = 100; // Tiempo máximo que puede permanecer el jugador en el aire (en milisegundos)
+        // Cargamos el sonido del salto que esta precargado en la escena
+        this.sonidoSalto = this.escena.sound.add("sonidoSalto", {
+            volume: 0.5,
+        });
 
         // Variables añadidas para registrar ráfagas de pulsación del mando
         this.padSaltoJustDown = false;
@@ -116,6 +120,7 @@ export default class Jugador extends Entidad {
             this.aplicarVelocidadEjeY(this.fuerzaDeSalto);
             this.saltando = true;
             this.tiempoSalto = 0;
+            this.sonidoSalto.play(); // Reproducimos el sonido del salto
         }
         
         // Si mantienes el botón pulsado para controlar la altura del salto

@@ -45,7 +45,7 @@ export default class Entidad extends Phaser.Physics.Arcade.Sprite {
         this.setOffset(offsetX, offsetY);
     }
 
-    // Mñetodo para fijar profuncidad
+    // Método para fijar la profundidad
     fijarProfundidad (profundidad) {
         this.setDepth (profundidad);
     }

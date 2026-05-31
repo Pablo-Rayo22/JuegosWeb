@@ -12,7 +12,7 @@ import UI from "../Scripts/UI.js";
 // export default es para poder importar la clase en otros ficheros .js
 export default class EscenaColinas extends Phaser.Scene {
     constructor() {
-        super("EscenaColinas")
+        super("escenaColinas")
         // Variables 
         this.tiempo = 350;
         this.delay = 750;
@@ -87,7 +87,7 @@ export default class EscenaColinas extends Phaser.Scene {
         // Orbes vida
         this.load.image ("orbeVida", "Assets/Imagenes/Sprites/Objetos/Recolectables/OrbesVida/orbeVida.png");
         // Joya
-        this.load.image ("joyaverde", "Assets/Imagenes/Sprites/Objetos/Recolectables/Joyas/joyaVerde.png")
+        this.load.image ("joyaVerde", "Assets/Imagenes/Sprites/Objetos/Recolectables/Joyas/joyaVerde.png")
 
         // Objetos interactivos
         // Palanca
@@ -102,8 +102,10 @@ export default class EscenaColinas extends Phaser.Scene {
     }
 
     cargarSonidos() {
+        this.load.audio ("sonidoSalto", "Assets/Sonidos/salto.ogg");
         this.load.audio("sonidoItem", "Assets/Sonidos/conseguirItem.ogg");
         this.load.audio("sonidoMoneda", "Assets/Sonidos/conseguirMoneda.ogg");
+        this.load.audio("sonidoVida", "Assets/Sonidos/conseguirVida.ogg");
         this.load.audio("sonidoGameOver", "Assets/Sonidos/gameOver.ogg");
         this.load.audio("sonidoGolpeBloque", "Assets/Sonidos/golpearBloque.ogg");
         this.load.audio("sonidoMuerteEnemigo", "Assets/Sonidos/muerteEnemigo.ogg");
@@ -112,6 +114,7 @@ export default class EscenaColinas extends Phaser.Scene {
         this.load.audio("musicaFondo", "Assets/Sonidos/musicaFondo.ogg");
         this.load.audio ("sonidoPalanca", "Assets/Sonidos/palanca.ogg");
         this.load.audio("sonidoTrampolin", "Assets/Sonidos/trampolin.ogg");
+        this.load.audio ("sonidoClicBoton", "Assets/Sonidos/clicBoton.ogg")
     }
 
     aniadirSonidos() {
@@ -119,13 +122,12 @@ export default class EscenaColinas extends Phaser.Scene {
         this.sonidoMoneda = this.sound.add("sonidoMoneda", {
             volume: 0.5,
         });
-        this.sonidoGameOver = this.sound.add("sonidoGameOver");
+        this.sonidoVida = this.sound.add ("sonidoVida");
         this.sonidoGolpeBloque = this.sound.add("sonidoGolpeBloque", {
             volume:0.6,
         });
         this.sonidoMuerteEnemigo = this.sound.add("sonidoMuerteEnemigo");
         this.sonidoMuerteJugador = this.sound.add("sonidoMuerteJugador");
-        this.sonidoVictoria = this.sound.add("sonidoVictoria");
         this.musicaFondo = this.sound.add("musicaFondo", {
             loop: true,
             volume: 1,
@@ -184,7 +186,7 @@ export default class EscenaColinas extends Phaser.Scene {
     }
     // Creamos al jugador en la escena
     crearJugador() {
-        this.jugador = new Jugador (this, 2536 - 64, 460);
+        this.jugador = new Jugador (this, 130, 530);
     }
 
     crearEnemigos() {
@@ -220,7 +222,7 @@ export default class EscenaColinas extends Phaser.Scene {
         this.grupoOrbesVida = this.physics.add.group();
 
         this.objetosJoya.forEach(recolectable => {
-            let joya = new Joya (this, recolectable.x, recolectable.y, "verde");
+            let joya = new Joya (this, recolectable.x, recolectable.y, "Verde");
             this.grupoJoyas.add(joya);
             joya.setVisible(false); // Ocultamos la joya
             joya.body.enable = false; // Quitamos colision a la joya
@@ -351,20 +353,15 @@ export default class EscenaColinas extends Phaser.Scene {
         this.sonidoItem.play({
             volume: 0.8,
         });
-        this.time.delayedCall (1500, () => {
-            this.sonidoVictoria.play();
-            this.scene.pause();
+        this.time.delayedCall (1000, () => {
+            this.scene.start("escenaVictoria");
         })
     }
 
     recolectarVidas (jugador, orbeVida) {
         this.UI.actualizarContadorVidas(1);
-
         orbeVida.disableBody(true, true);
-
-        if (this.UI.monedasRecolectadas %50) {
-            this.UI.actualizarContadorVidas(1);
-        }
+        this.sonidoVida.play();
     }
     // Metodo para matar a los enemigos cuando saltamos encima de ellos
     matarEnemigos (jugador, enemigo) {
