@@ -30,6 +30,26 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
     }
     // Creamos recursos
     create() {
+
+        //Vida
+        if (this.registry.get('vidas') === undefined) {
+            this.registry.set('vidas', 3);
+        }
+
+        //Monedas
+        if (this.registry.get('monedas') === undefined) {
+            this.registry.set('monedas', 0);
+        }
+        this.textoVidas = this.add.text(20, 20, 'Vidas: ' + this.registry.get('vidas'), {
+            fontSize: '24px',
+            fill: '#000000'
+        }).setScrollFactor(0);
+
+        this.textoMonedas = this.add.text(200, 20, 'Monedas: ' + this.registry.get('monedas'), {
+            fontSize: '24px',
+            fill: '#000000'
+        }).setScrollFactor(0);
+
         this.aniadirSonidos();
         this.crearFondo();
         this.crearMapa();
@@ -343,10 +363,22 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
     recolectarMonedas(jugador, moneda) {
         this.sonidoMoneda.play();
         moneda.disableBody(true, true);
+        let monedas = this.registry.get('monedas') || 0;
+
+        monedas++;
+
+        this.registry.set('monedas', monedas);
+
         this.UI.actualizarContadorMonedas(1);
-        if (this.UI.monedasRecolectadas %50 === 0) {
+
+        if (monedas %50 === 0) {
+            let vidas = this.registry.get('vidas') || 3;
+
+            vidas++;
+
+            this.registry.set('vidas', vidas);
+
             this.UI.actualizarContadorVidas(1);
-            this.UI.monedasRecolectadas = 0; // Resetamos el contador;
         }
     }
     recolectarVidas (jugador, orbeVida) {
@@ -422,6 +454,13 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
     }
 
     restarVidas () {
+
+        let vidas = this.registry.get('vidas');
+
+        vidas--;
+
+        this.registry.set('vidas', vidas);
+
         this.UI.actualizarContadorVidas(-1);
         if (this.UI.vidas > 0) {
             this.jugador.disableBody(true, false);
@@ -434,7 +473,14 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
             this.jugador.enableBody(true, this.jugador.posicionInicial.x, this.jugador.posicionInicial.y, true, true);
             this.time.delayedCall (100, () => {
                 this.musicaFondo.play();
-            })
+            });
+        } else {
+            console.log("GAME OVER");
+
+            this.registry.set('vidas', 3);
+            this.registry.set('monedas', 0);
+
+            this.scene.restart();
         }
     }
 
