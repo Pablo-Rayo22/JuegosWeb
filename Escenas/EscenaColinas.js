@@ -19,8 +19,22 @@ export default class EscenaColinas extends Phaser.Scene {
         this.delay = 750;
     }
 
-    init() { // Metodo para inicializar o instanciar cuando carga el juego y cada vez que se recarga este
+    init(datos) { // Metodo para inicializar o instanciar cuando carga el juego y cada vez que se recarga este
         this.UI = new UI(this);
+        this.bloquesMonedaActivados = [] //Array para almacenar qué bloques de moneda fueron activados
+
+        if (datos.monedas !== null && datos.monedas !== undefined) {
+            this.UI.monedasRecolectadas = datos.monedas
+        }
+        else {
+            this.UI.monedasRecolectadas = 0;
+        }
+        if (datos.vidas !== null && datos.vidas !== undefined) {
+            this.UI.vidas = datos.vidas;
+        }
+        else {
+            this.UI.vidas = this.UI.vidasIniciales
+        }
     }
 
     preload() {
@@ -361,7 +375,7 @@ export default class EscenaColinas extends Phaser.Scene {
             enemigo.disableBody(true, true); // Deshabilitamos al enemigo de la escena
             console.log ("Enemigo muerto");
             jugador.setVelocityY(-150); // Recibe un pequeño impulso al saltar sobre un enemigo
-            this.UI.actualizarContadorMonedas(3); // Al matar a un enemigo aumenta el contador de monedas
+            this.UI.actualizarContadorMonedas(2); // Al matar a un enemigo aumenta el contador de monedas
         }
         else {
             this.morir(); // El jugador muere
@@ -386,6 +400,7 @@ export default class EscenaColinas extends Phaser.Scene {
         if (tipo === "bloque_moneda") { // Propiedad en tiled
             console.log("Bloque activado");
             tile.properties.golpeado = true; // Propiedad en tiled
+            this.bloquesMonedaActivados.push(tile);
             this.activarBloqueMoneda(tile);
             this.UI.actualizarContadorMonedas(1);
         }
@@ -448,8 +463,9 @@ export default class EscenaColinas extends Phaser.Scene {
 
     resetaearNivel () {
         this.resetearTemporizador();
+        this.resetearBloquesMoneda();
         this.restearEnemigos();
-        this.resetarRecolectables();
+        this.resetearRecolectables();
         this.resetearPalanca();
     }
 
@@ -461,7 +477,7 @@ export default class EscenaColinas extends Phaser.Scene {
             enemigo.enableBody(true, enemigo.posicionInicial.x, enemigo.posicionInicial.y, true, true);
         });
     }
-    resetarRecolectables () {
+    resetearRecolectables () {
 
         this.grupoMonedas.children.iterate (recolectable  => {
             recolectable.anims.stop();
@@ -476,7 +492,7 @@ export default class EscenaColinas extends Phaser.Scene {
     }
     resetearPalanca() {
         this.tilesParedPinchos.setVisible(false); // Hacemos invisible la pared de pinchos
-        this.tilesParedPinchos.setCollisionByExclusion([-1], false); // Deshabilitamos las fisicas de la pared de pinchos
+        this.colliderParedPinchos.active = false; // Deshabilitamos las fisicas de la pared de pinchos
         this.arrayTrampolines.forEach(trampolin => {
             trampolin.setVisible(false); // Hacemos invisible el trampolin
             trampolin.body.enable = false; // Deshabilitamos las fisicas del trampolin
@@ -498,5 +514,18 @@ export default class EscenaColinas extends Phaser.Scene {
         this.tiempo = this.tiempoInicial;
         this.UI.textoTiempo.setText("Tiempo: " + this.tiempo);
         this.UI.actualizarContadorTiempo(this.delay);
+    }
+
+    resetearBloquesMoneda() {
+        this.bloquesMonedaActivados.forEach (tile => {
+            tile.properties.golpeado = false;
+            this.tilesPlataformas.putTileAt(
+                3, // Corresponde al tercer tile que esta en la tilesheet empezando por arriba y siguiendo de izquierda a derecha.
+                tile.x,
+                tile.y
+            );
+            this.tilesPlataformas.setCollisionByExclusion([-1]); // Activamos la colision del nuevo bloque
+        })
+        this.bloquesMonedaActivados = [];
     }
 }

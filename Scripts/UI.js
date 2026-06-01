@@ -27,7 +27,7 @@ export default class UI {
     }
 
     crearContadorMonedas(posicionX, posicionY) {
-        this.textoMonedasRecolectadas = this.escena.add.text(posicionX, posicionY, "Monedas: 0", { 
+        this.textoMonedasRecolectadas = this.escena.add.text(posicionX, posicionY, "Monedas: " + this.monedasRecolectadas, { 
             fontSize: "17.5px",
             fill: "#000000",
             fontFamily: "arial, verdana",

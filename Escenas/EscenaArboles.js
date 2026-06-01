@@ -8,7 +8,6 @@ import Sierra from "../Scripts/Sierra.js";
 import Palanca from "../Scripts/Palanca.js";
 import Trampolin from "../Scripts/Trampolin.js";
 import UI from "../Scripts/UI.js";
-import GameOver from "./EscenaGameOver.js";
 
 // export default es para poder importar la clase en otros ficheros .js
 export default class EscenaArboles extends Phaser.Scene { // Escena 1
@@ -24,7 +23,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
     
     init() { // Metodo para inicializar o instanciar cuando carga el juego y cada vez que se recarga este
         this.UI = new UI(this);
-        this.gameOver = new GameOver ();
+        this.bloquesMonedaActivados = [] //Array para almacenar qué bloques de moneda fueron activados
     }
     
     // Precarga de recursos
@@ -353,7 +352,10 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
             volume: 0.8,
         }) 
         this.time.delayedCall (300, () =>{
-            this.scene.start("escenaColinas"); 
+            this.scene.start("escenaColinas", {
+                monedas: this.UI.monedasRecolectadas,
+                vidas: this.UI.vidas,
+            }); 
         })
     }
 
@@ -377,7 +379,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
             enemigo.disableBody(true, true); // Deshabilitamos al enemigo de la escena
             console.log ("Enemigo muerto");
             jugador.setVelocityY(-150); // Recibe un pequeño impulso al saltar sobre un enemigo
-            this.UI.actualizarContadorMonedas(3); // Al matar a un enemigo aumenta el contador de monedas
+            this.UI.actualizarContadorMonedas(2); // Al matar a un enemigo aumenta el contador de monedas
         }
         else {
             this.morir(); // El jugador muere
@@ -404,6 +406,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         if (tipo === "bloque_moneda") { // Propiedad en tiled
             console.log("Bloque activado");
             tile.properties.golpeado = true; // Propiedad en tiled
+            this.bloquesMonedaActivados.push(tile);
             this.activarBloqueMoneda(tile);
             this.UI.actualizarContadorMonedas(1);
         }
@@ -473,6 +476,7 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
     resetearNivel () {
         this.resetearTemporizador();
         this.resetearEnemigos();
+        this.resetearBloquesMoneda();
         this.resetarRecolectables();
         this.resetearPalanca();
     }
@@ -522,5 +526,19 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         this.tiempo = this.tiempoInicial;
         this.UI.textoTiempo.setText("Tiempo: " + this.tiempo);
         this.UI.actualizarContadorTiempo(this.delay);
+    }
+
+    resetearBloquesMoneda() {
+        this.bloquesMonedaActivados.forEach (tile => {
+            tile.properties.golpeado = false;
+            this.tilesPlataformas.putTileAt(
+
+                3, // Corresponde al tercer tile que esta en la tilesheet empezando por arriba y siguiendo de izquierda a derecha.
+                tile.x,
+                tile.y
+            );
+            this.tilesPlataformas.setCollisionByExclusion([-1]); // Activamos la colision del nuevo bloque
+        })
+        this.bloquesMonedaActivados = [];
     }
 }
