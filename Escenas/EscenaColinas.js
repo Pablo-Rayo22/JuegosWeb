@@ -22,7 +22,7 @@ export default class EscenaColinas extends Phaser.Scene {
     init(datos) { // Metodo para inicializar o instanciar cuando carga el juego y cada vez que se recarga este
         this.UI = new UI(this);
         this.bloquesMonedaActivados = [] //Array para almacenar qué bloques de moneda fueron activados
-        mantenerMonedasYVidas ();
+        this.mantenerMonedasYVidas (datos);
     }
 
     preload() {
@@ -516,7 +516,7 @@ export default class EscenaColinas extends Phaser.Scene {
         })
         this.bloquesMonedaActivados = [];
     }
-    mantenerMonedasYVidas() {
+    mantenerMonedasYVidas(datos) {
         if (datos.monedas !== null && datos.monedas !== undefined) {
             this.UI.monedasRecolectadas = datos.monedas
         }
