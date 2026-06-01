@@ -8,6 +8,11 @@ export default class Recolectable extends Entidad {
         // Para evitar que se muevan
         this.body.setImmovable(true);
         this.body.moves = false;
+
+        this.posicionInicial = {
+            x: x,
+            y: y,
+        }
     }
     
 }

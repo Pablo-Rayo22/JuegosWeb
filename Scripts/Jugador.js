@@ -22,8 +22,8 @@ export default class Jugador extends Entidad {
         
         // Variable para guardar la posicionInicial del jugador
         this.posicionInicial = {
-            x: 130,
-            y: 530,
+            x: x,
+            y: y,
         };
 
         // Llamadas a metodos 

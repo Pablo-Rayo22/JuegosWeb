@@ -78,6 +78,19 @@ export default class Palanca extends Interactivo {
 
     // Animaciones
     crearAnimacionesPalanca() {        
+        if (!this.escena.anims.exists("spr_palanca_inactiva1")) {
+            // Animacion de palanca activa
+            this.animacionPalancaInactiva = {} //Creamos un nuevo objeto
+            this.animacionPalancaInactiva.key = "spr_palanca_inactiva1";
+            this.animacionPalancaInactiva.frames = this.escena.anims.generateFrameNames ("spr_palanca", {
+                prefix: "spr_palanca_inactiva1",
+                start: 1,
+                end: 1,
+            });
+            this.animacionPalancaInactiva.frameRate = 10;
+            this.animacionPalancaInactiva.repeat = -1;
+            this.escena.anims.create(this.animacionPalancaInactiva);
+        }
         if (!this.escena.anims.exists("spr_palanca_activa_derecha")) {
             // Animacion de palanca activa
             this.animacionPalancaActivaDerecha = {} //Creamos un nuevo objeto

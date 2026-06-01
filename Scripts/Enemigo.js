@@ -12,6 +12,11 @@ export default class Enemigo extends Entidad {
         this.setCollideWorldBounds(true); // No salir de los bordes
         
         this.body.allowGravity = false; // Deshabilitamos la gravedad
+
+        this.posicionInicial = {
+            x: x,
+            y: y,
+        }
     }
     update() {
         this.comportamiento();

@@ -11,13 +11,13 @@ export default class UI {
         this.vidasIniciales = 3;
         this.vidas = this.vidasIniciales;
         this.textoVidas = null;
-        this.siguienteVida = 50;
+        this.siguienteVida = 100;
 
         // Grupo para guardar las imágenes individuales de los corazones
         this.grupoVidasVisuales = this.escena.add.group();
     }
 
-    // Creamos el contador tiempo
+    // Creamos los contadores
     crearContadorTiempo(posicionX, posicionY, tiempo) { 
         this.textoTiempo = this.escena.add.text(posicionX, posicionY, "Tiempo: " + tiempo, {
             fontSize: "17.5px",
@@ -26,7 +26,6 @@ export default class UI {
         }).setScrollFactor(0);
     }
 
-    // Creamos los contadores
     crearContadorMonedas(posicionX, posicionY) {
         this.textoMonedasRecolectadas = this.escena.add.text(posicionX, posicionY, "Monedas: 0", { 
             fontSize: "17.5px",
@@ -77,15 +76,15 @@ export default class UI {
     }
 
     // Actualizamos los contadores
-    actualizarContadorTiempo(delay, tiempo) {
-        this.escena.time.addEvent({
+    actualizarContadorTiempo(delay) {
+       this.temporizador = this.escena.time.addEvent({
             delay: delay, 
             callback: () => {
-                if (tiempo > 0) {
-                    tiempo--;
-                    this.textoTiempo.setText("Tiempo: " + tiempo);
+                if (this.escena.tiempo > 0) {
+                    this.escena.tiempo--;
+                    this.textoTiempo.setText("Tiempo: " + this.escena.tiempo);
                 }
-                else if (tiempo === 0) {
+                else if (this.escena.tiempo === 0) {
                     this.escena.morir();
                 }
                 else {
@@ -107,7 +106,7 @@ export default class UI {
             // Incremento de vida al alcanzar la puntuación requerida
             if (this.monedasRecolectadas >= this.siguienteVida) {
                 this.actualizarContadorVidas(1);
-                this.siguienteVida += 50;
+                this.siguienteVida += 100;
                 this.escena.sonidoVida.play();
             }
         }

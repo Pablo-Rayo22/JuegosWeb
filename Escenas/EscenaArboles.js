@@ -17,7 +17,8 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         super("escenaArboles");
 
         // Variables
-        this.tiempo = 350; // Tiempo de la escena
+        this.tiempoInicial = 350;
+        this.tiempo = this.tiempoInicial; // Tiempo de la escena
         this.delay = 750; // Cada cuantos milisegundos disminuye una unidad de tiempo
     }
     
@@ -363,9 +364,9 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
     }
 
     recolectarVidas (jugador, orbeVida) {
-        this.UI.actualizarContadorVidas(1);
-        orbeVida.disableBody(true, true);
         this.sonidoVida.play();
+        orbeVida.disableBody(true, true);
+        this.UI.actualizarContadorVidas(1);
     }
 
     // Metodo para matar a los enemigos cuando saltamos encima de ellos
@@ -442,12 +443,12 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
         this.UI.actualizarContadorVidas(-1);
         if (this.UI.vidas > 0) {
             this.jugador.disableBody(true, false);
-
+            this.resetearNivel();
             this.jugador.setPosition(
             this.jugador.posicionInicial.x,
             this.jugador.posicionInicial.y
             );
-
+            
             this.jugador.enableBody(true, this.jugador.posicionInicial.x, this.jugador.posicionInicial.y, true, true);
             this.musicaFondo.stop();
             this.time.delayedCall (100, () => {
@@ -467,5 +468,59 @@ export default class EscenaArboles extends Phaser.Scene { // Escena 1
             // Cambiamos la dirección del sprite del enemigo para que mire en la dirección correcta
             enemigo.setFlipX(enemigo.direccion < 0);   
         }
+    }
+
+    resetearNivel () {
+        this.resetearTemporizador();
+        this.resetearEnemigos();
+        this.resetarRecolectables();
+        this.resetearPalanca();
+    }
+
+    resetearEnemigos () {
+        this.grupoCaracoles.children.iterate(enemigo => {
+            enemigo.enableBody(true, enemigo.posicionInicial.x, enemigo.posicionInicial.y, true, true);
+        });
+        this.grupoGusanosAzules.children.iterate (enemigo  => {
+            enemigo.enableBody(true, enemigo.posicionInicial.x, enemigo.posicionInicial.y, true, true);
+        });
+    }
+    resetarRecolectables () {
+        this.grupoMonedas.children.iterate (recolectable  => {
+            recolectable.anims.stop();
+            recolectable.enableBody (true, recolectable.posicionInicial.x, recolectable.posicionInicial.y, true, true);
+
+            recolectable.play("spr_moneda_oro_girando", true);
+        });
+        this.grupoOrbesVida.children.iterate (recolectable  => {
+            recolectable.enableBody(true, recolectable.posicionInicial.x, recolectable.posicionInicial.y, true, true);
+        });
+    }
+    resetearPalanca() {
+        this.tilesPuente.setVisible(false); // Hacemos invisible el puente
+        this.tilesPuente.setCollisionByExclusion([-1], false); // Deshabilitamos las fisicas del puente
+        this.tilesPinchosPuente.setVisible(false); // Hacemos invisible los pinchos del puente
+        this.tilesPinchosPuente.setCollisionByExclusion([-1], false); // Deshabilitamos las fisicas de los pinchos del puente
+        this.arrayTrampolines.forEach(trampolin => {
+            trampolin.setVisible(false); // Hacemos invisible el trampolin
+            trampolin.body.enable = false; // Deshabilitamos las fisicas del trampolin
+        });
+        this.tilesPlataformaJoya.setVisible(false); // Hacemos invisible la plataforma de la joya
+        this.tilesPlataformaJoya.setCollisionByExclusion([-1], false); // Deshabilitamos colision
+        this.grupoJoyas.children.iterate(joya => {
+            joya.setVisible(false); // Hacemos invisible la joya
+            joya.body.enable = false; // Desactivamos colision a la joya
+        });
+        this.arrayPalancas.forEach (interactivo => {
+            interactivo.anims.stop();
+            interactivo.setFrame ("spr_palanca_inactiva1");
+            interactivo.activo = false;
+        })
+    }
+    resetearTemporizador() {
+        this.UI.temporizador.remove();
+        this.tiempo = this.tiempoInicial;
+        this.UI.textoTiempo.setText("Tiempo: " + this.tiempo);
+        this.UI.actualizarContadorTiempo(this.delay);
     }
 }
