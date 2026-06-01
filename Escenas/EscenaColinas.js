@@ -22,19 +22,7 @@ export default class EscenaColinas extends Phaser.Scene {
     init(datos) { // Metodo para inicializar o instanciar cuando carga el juego y cada vez que se recarga este
         this.UI = new UI(this);
         this.bloquesMonedaActivados = [] //Array para almacenar qué bloques de moneda fueron activados
-
-        if (datos.monedas !== null && datos.monedas !== undefined) {
-            this.UI.monedasRecolectadas = datos.monedas
-        }
-        else {
-            this.UI.monedasRecolectadas = 0;
-        }
-        if (datos.vidas !== null && datos.vidas !== undefined) {
-            this.UI.vidas = datos.vidas;
-        }
-        else {
-            this.UI.vidas = this.UI.vidasIniciales
-        }
+        mantenerMonedasYVidas ();
     }
 
     preload() {
@@ -527,5 +515,19 @@ export default class EscenaColinas extends Phaser.Scene {
             this.tilesPlataformas.setCollisionByExclusion([-1]); // Activamos la colision del nuevo bloque
         })
         this.bloquesMonedaActivados = [];
+    }
+    mantenerMonedasYVidas() {
+        if (datos.monedas !== null && datos.monedas !== undefined) {
+            this.UI.monedasRecolectadas = datos.monedas
+        }
+        else {
+            this.UI.monedasRecolectadas = 0;
+        }
+        if (datos.vidas !== null && datos.vidas !== undefined) {
+            this.UI.vidas = datos.vidas;
+        }
+        else {
+            this.UI.vidas = this.UI.vidasIniciales
+        }
     }
 }
