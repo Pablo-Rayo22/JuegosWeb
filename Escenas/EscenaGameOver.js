@@ -1,18 +1,18 @@
-import BotonReinciar from "../Scripts/BotonReiniciar.js";
+import BotonReiniciar from "../Scripts/Botones/BotonReiniciar.js";
 // export default es para poder importar la clase en otros ficheros .js
 export default class EscenaGameOver extends Phaser.Scene {
     constructor () {
         super("escenaGameOver");
 
         // Creamos una instancia de la clase BotonReiniciar
-        this.botonReinciar = new BotonReinciar (this);
+        this.botonReiniciar = new BotonReiniciar (this);
     }
     // Precargamos los recursos
     preload () {
-        this.load.image("gameOver", "Assets/Imagenes/FinJuego/gameOver.png");
+        this.load.image("gameOver", "Assets/Imagenes/Menus/gameOver.png");
         // this.load.image("fondo", "Assets/Imagenes/Finjuego/fondo.jpg");
         this.load.audio("sonidoGameOver", "Assets/Sonidos/gameOver.ogg")
-        this.botonReinciar.cargarBotonReiniciar();
+        this.botonReiniciar.cargarBotonReiniciar();
     }
     // Cargamos los recursos
     create() {
@@ -20,6 +20,6 @@ export default class EscenaGameOver extends Phaser.Scene {
         // this.imagenFondo = this.add.image (0, 0, "fondo").setOrigin (0, 0).setScale(10);
         this.sonidoGameOver = this.sound.add("sonidoGameOver");
         this.sonidoGameOver.play();
-        this.botonReinciar.crearBotonReinciar();
+        this.botonReiniciar.crearBotonReiniciar();
     }
 }

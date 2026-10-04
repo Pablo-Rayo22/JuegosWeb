@@ -1,16 +1,15 @@
+import EscenaBase from "./EscenaBase.js";
 import Jugador from "../Scripts/Jugador.js";
 import Caracol from "../Scripts/Caracol.js";
 import GusanoAzul from "../Scripts/GusanoAzul.js";
 import Sierra from "../Scripts/Sierra.js";
 import PezAzul from "../Scripts/PezAzul.js";
-import Moneda from "../Scripts/Moneda.js";
-import OrbeVida from "../Scripts/OrbeVida.js";
 import Joya from "../Scripts/Joya.js";
 import Palanca from "../Scripts/Palanca.js";
 import Trampolin from "../Scripts/Trampolin.js";
-import UI from "../Scripts/UI.js";
+
 // export default es para poder importar la clase en otros ficheros .js
-export default class EscenaColinas extends Phaser.Scene {
+export default class EscenaColinas extends EscenaBase {
     constructor() {
         super("escenaColinas")
         // Variables 
@@ -20,9 +19,9 @@ export default class EscenaColinas extends Phaser.Scene {
     }
 
     init(datos) { // Metodo para inicializar o instanciar cuando carga el juego y cada vez que se recarga este
-        this.UI = new UI(this);
+        super.init();
         this.bloquesMonedaActivados = [] //Array para almacenar qué bloques de moneda fueron activados
-        this.mantenerMonedasYVidas (datos);
+        super.mantenerMonedasYVidas (datos);
     }
 
     preload() {
@@ -30,18 +29,17 @@ export default class EscenaColinas extends Phaser.Scene {
         this.cargarSonidos();
     }
 
-    create () {
-        this.aniadirSonidos();
-        this.crearFondo();
-        this.crearMapa();
-        this.crearJugador();
-        this.crearEnemigos();
-        this.crearRecolectables();
-        this.crearInteractivos();
-        this.crearColisiones();
-        this.controlarCamara();
-        this.crearContadores();
-    }
+    create() {
+    this.aniadirSonidos();
+    this.crearFondo();
+    this.crearMapa();
+    this.crearJugador();
+    this.crearObjetos();
+    this.crearColisiones();
+
+    super.crearContadores();
+    super.controlarCamara(this.jugador, this.mapa);
+}
 
     update() {
         this.jugador.update();
@@ -50,85 +48,75 @@ export default class EscenaColinas extends Phaser.Scene {
     }
 
     cargarImagenes() {
+        super.cargarImagenesComunes();
+
         // Fondo
         this.load.image("colinas", "Assets/Imagenes/Fondos/colinas.png");
-
-        // Jugador
-        this.load.image("jugador", "Assets/Imagenes/Sprites/Personajes/Protagonista/protagonista.png");
-        this.load.atlas("spr_jugador", "Assets/Imagenes/Sprites/Personajes/Protagonista/spr_jugador.png", "Assets/Imagenes/Sprites/Personajes/Protagonista/spr_jugador_atlas.json")
 
         // Enemigos
         // Caracol
         this.load.image("caracol", "Assets/Imagenes/Sprites/Personajes/Enemigos/Caracol/caracol.png");
-        this.load.atlas("spr_caracol", "Assets/Imagenes/Sprites/Personajes/Enemigos/Caracol/spr_caracol.png", "Assets/Imagenes/Sprites/Personajes/Enemigos/Caracol/spr_caracol_atlas.json");
+
         // Gusano azul
         this.load.image("gusanoAzul", "Assets/Imagenes/Sprites/Personajes/Enemigos/GusanoAzul/gusanoAzul.png");
-        this.load.atlas("spr_gusano_azul", "Assets/Imagenes/Sprites/Personajes/Enemigos/GusanoAzul/spr_gusano_azul.png", "Assets/Imagenes/Sprites/Personajes/Enemigos/GusanoAzul/spr_gusano_azul_atlas.json");
 
         // Pez azul
         this.load.image("pezAzul", "Assets/Imagenes/Sprites/Personajes/Enemigos/PezAzul/pezAzul.png");
-        this.load.atlas("spr_pez_azul", "Assets/Imagenes/Sprites/Personajes/Enemigos/PezAzul/spr_pez_azul.png", "Assets/Imagenes/Sprites/Personajes/Enemigos/PezAzul/spr_pez_azul_atlas.json");
 
         // Agua
         this.load.image ("agua", "Assets/Imagenes/Sprites/Tileset/Agua/agua.png");
 
         // Objetos recolectables
-        // Monedas
-        this.load.image("moneda", "Assets/Imagenes/Sprites/Objetos/Recolectables/Monedas/monedaOro.png");
-        this.load.atlas("spr_moneda_oro", "Assets/Imagenes/Sprites/Objetos/Recolectables/Monedas/spr_moneda_oro.png", "Assets/Imagenes/Sprites/Objetos/Recolectables/Monedas/spr_moneda_oro_atlas.json");
-        // Orbes vida
-        this.load.image ("orbeVida", "Assets/Imagenes/Sprites/Objetos/Recolectables/OrbesVida/orbeVida.png");
-        // Joya
-        this.load.image ("joyaVerde", "Assets/Imagenes/Sprites/Objetos/Recolectables/Joyas/joyaVerde.png")
+        this.load.image("joyaVerde", "Assets/Imagenes/Sprites/Objetos/Recolectables/Joyas/joyaVerde.png")
 
         // Objetos interactivos
         // Palanca
         this.load.image("palanca", "Assets/Imagenes/Sprites/Objetos/Interactivos/Palanca/palanca.png");
-        this.load.atlas("spr_palanca", "Assets/Imagenes/Sprites/Objetos/Interactivos/Palanca/spr_palanca.png", "Assets/Imagenes/Sprites/Objetos/Interactivos/Palanca/spr_palanca_atlas.json");
-
-        // Mapa
-        this.load.tilemapTiledJSON("mapa2", "Assets/Imagenes/Mapas/mapa2.tmj");
         
-        //Tiles
-        this.load.image("tilesheet", "Assets/Imagenes/Sprites/Tileset/tiles.png");
+        // Mapa
+        this.load.tilemapTiledJSON ("mapa2", "../Assets/Imagenes/Mapas/mapa2.tmj");
+
+
+        this.cargarAtlas();
     }
 
-    cargarSonidos() {
-        this.load.audio ("sonidoSalto", "Assets/Sonidos/salto.ogg");
-        this.load.audio("sonidoItem", "Assets/Sonidos/conseguirItem.ogg");
-        this.load.audio("sonidoMoneda", "Assets/Sonidos/conseguirMoneda.ogg");
-        this.load.audio("sonidoVida", "Assets/Sonidos/conseguirVida.ogg");
-        this.load.audio("sonidoGameOver", "Assets/Sonidos/gameOver.ogg");
-        this.load.audio("sonidoGolpeBloque", "Assets/Sonidos/golpearBloque.ogg");
-        this.load.audio("sonidoMuerteEnemigo", "Assets/Sonidos/muerteEnemigo.ogg");
-        this.load.audio("sonidoMuerteJugador", "Assets/Sonidos/muerteJugador.ogg");
-        this.load.audio("sonidoVictoria", "Assets/Sonidos/victoria.ogg");
-        this.load.audio("musicaFondo", "Assets/Sonidos/musicaFondo.ogg");
-        this.load.audio ("sonidoPalanca", "Assets/Sonidos/palanca.ogg");
+    cargarAtlas () {
+        super.cargarAtlasComunes();
+
+        // Caracol
+        this.load.atlas("spr_caracol", "Assets/Imagenes/Sprites/Personajes/Enemigos/Caracol/spr_caracol.png", "Assets/Imagenes/Sprites/Personajes/Enemigos/Caracol/spr_caracol_atlas.json");    
+        // Gusano azul    
+        this.load.atlas("spr_gusano_azul", "Assets/Imagenes/Sprites/Personajes/Enemigos/GusanoAzul/spr_gusano_azul.png", "Assets/Imagenes/Sprites/Personajes/Enemigos/GusanoAzul/spr_gusano_azul_atlas.json");
+        // Sierra
+        this.load.image("sierra", "Assets/Imagenes/Sprites/Personajes/Enemigos/Sierra/sierra.png");
+        this.load.atlas("spr_sierra", "Assets/Imagenes/Sprites/Personajes/Enemigos/Sierra/spr_sierra.png", "Assets/Imagenes/Sprites/Personajes/Enemigos/Sierra/spr_sierra_atlas.json");
+        // Pez azul
+        this.load.atlas("spr_pez_azul", "Assets/Imagenes/Sprites/Personajes/Enemigos/PezAzul/spr_pez_azul.png", "Assets/Imagenes/Sprites/Personajes/Enemigos/PezAzul/spr_pez_azul_atlas.json");
+        
+        // Objetos interactivos
+        // Palanca
+        this.load.atlas("spr_palanca", "Assets/Imagenes/Sprites/Objetos/Interactivos/Palanca/spr_palanca.png", "Assets/Imagenes/Sprites/Objetos/Interactivos/Palanca/spr_palanca_atlas.json"); 
+        // Trampolin
+        this.load.atlas("spr_trampolin", "Assets/Imagenes/Sprites/Objetos/Interactivos/Trampolin/trampolin.png", "Assets/Imagenes/Sprites/Objetos/Interactivos/Trampolin/spr_trampolin_atlas.json");
+    }
+
+    // Cargamos los sonidos del juego
+    cargarSonidos () {
+        super.cargarSonidosComunes();
+
+        this.load.audio("sonidoPalanca", "Assets/Sonidos/palanca.ogg");
         this.load.audio("sonidoTrampolin", "Assets/Sonidos/trampolin.ogg");
-        this.load.audio ("sonidoClicBoton", "Assets/Sonidos/clicBoton.ogg")
+
     }
 
+    // Añadimos sonidos al juego
     aniadirSonidos() {
-        this.sonidoItem = this.sound.add("sonidoItem");
-        this.sonidoMoneda = this.sound.add("sonidoMoneda", {
-            volume: 0.5,
-        });
-        this.sonidoVida = this.sound.add ("sonidoVida");
-        this.sonidoGolpeBloque = this.sound.add("sonidoGolpeBloque", {
-            volume:0.6,
-        });
-        this.sonidoMuerteEnemigo = this.sound.add("sonidoMuerteEnemigo");
-        this.sonidoMuerteJugador = this.sound.add("sonidoMuerteJugador");
-        this.musicaFondo = this.sound.add("musicaFondo", {
-            loop: true,
-            volume: 1,
-        });
+        super.aniadirSonidosComunes();
+
         this.sonidoPalanca = this.sound.add ("sonidoPalanca", {
             volume: 1,
         });
         this.sonidoTrampolin = this.sound.add ("sonidoTrampolin");
-        this.musicaFondo.play();
     }
 
     crearFondo () {
@@ -142,13 +130,17 @@ export default class EscenaColinas extends Phaser.Scene {
         this.mapa = this.make.tilemap({key: "mapa2"})
         this.hojaTiles = this.mapa.addTilesetImage("tiles", "tilesheet", 64, 64, 0 , 0);
         // Cargamos las capas de Tiled
-        this.crearCapasTiles();
-        this.crearCapasObjetos();
+        this.crearCapas();
         this.tilesPeligros.setCollisionByExclusion([-1]);
         this.tilesSuelo.setCollisionByExclusion([-1]);
         this.tilesPlataformas.setCollisionByExclusion([-1]);
         this.tilesParedPinchos.setCollisionByExclusion([-1]);
 
+    }
+
+    crearCapas () {
+        this.crearCapasTiles();
+        this.crearCapasObjetos();
     }
 
     crearCapasTiles() {
@@ -176,9 +168,15 @@ export default class EscenaColinas extends Phaser.Scene {
         this.objetosPalanca = this.mapa.getObjectLayer ("palancas").objects;
         this.objetosTrampolin = this.mapa.getObjectLayer ("trampolines").objects;
     }
-    // Creamos al jugador en la escena
-    crearJugador() {
+
+    crearJugador () {
         this.jugador = new Jugador (this, 130, 530);
+    }
+
+    crearObjetos() {
+        this.crearEnemigos();
+        this.crearRecolectables();        
+        this.crearInteractivos();
     }
 
     crearEnemigos() {
@@ -208,10 +206,9 @@ export default class EscenaColinas extends Phaser.Scene {
     }
 
     crearRecolectables() {
+        super.crearRecolectablesComunes();
         // Creamos grupos para luego recorrerlos
         this.grupoJoyas = this.physics.add.group();
-        this.grupoMonedas = this.physics.add.group();
-        this.grupoOrbesVida = this.physics.add.group();
 
         this.objetosJoya.forEach(recolectable => {
             let joya = new Joya (this, recolectable.x, recolectable.y, "Verde");
@@ -219,15 +216,7 @@ export default class EscenaColinas extends Phaser.Scene {
             joya.setVisible(false); // Ocultamos la joya
             joya.body.enable = false; // Quitamos colision a la joya
         });
-        this.objetosMoneda.forEach(recolectable => {
-            let moneda = new Moneda (this, recolectable.x, recolectable.y);
-            this.grupoMonedas.add(moneda);
-        });
-        this.objetosOrbesVida.forEach (recolectable => {
-            let orbeVida = new OrbeVida (this, recolectable.x, recolectable.y);
-
-            this.grupoOrbesVida.add(orbeVida);
-        })
+       
     }
 
     crearInteractivos () {
@@ -244,13 +233,6 @@ export default class EscenaColinas extends Phaser.Scene {
             trampolin.setVisible(false); // Ocultamos el trampolin
             trampolin.body.enable = false; // Deshabilitamos las fisicas
         });
-    }
-
-    crearContadores() {
-        this.UI.crearContadorTiempo(20, 90, this.tiempo);
-        this.UI.actualizarContadorTiempo(this.delay, this.tiempo);
-        this.UI.crearContadorMonedas(450, 90);
-        this.UI.crearContadorVidas(20, 120)
     }
 
     /***************************** COLISONES **********************************/
@@ -317,28 +299,7 @@ export default class EscenaColinas extends Phaser.Scene {
         this.physics.add.collider(this.grupoGusanosAzules, this.arrayTrampolines);
     }
 
-    controlarCamara() {
-        this.cameras.main.startFollow(this.jugador, true, 0.08, 0.08);
-        this.cameras.main.setBounds(
-            0,
-            0,
-            this.mapa.widthInPixels,
-            this.mapa.heightInPixels
-        );
-        this.physics.world.setBounds( // Fijamos los límites del mundo físico
-        0,
-        0,
-        this.mapa.widthInPixels,
-        this.mapa.heightInPixels
-        );
-    }
-
-    recolectarMonedas(jugador, moneda) {
-        this.sonidoMoneda.play();
-        moneda.disableBody(true, true);
-        this.UI.actualizarContadorMonedas(1);
-    }
-
+    
     recolectarJoya(jugador, joya) {
         this.musicaFondo.stop();
         joya.disableBody(true, true);
@@ -350,30 +311,6 @@ export default class EscenaColinas extends Phaser.Scene {
         })
     }
 
-    recolectarVidas (jugador, orbeVida) {
-        this.UI.actualizarContadorVidas(1);
-        orbeVida.disableBody(true, true);
-        this.sonidoVida.play();
-    }
-    // Metodo para matar a los enemigos cuando saltamos encima de ellos
-    matarEnemigos (jugador, enemigo) {
-        // Si saltamos sobre el enemigo lo matamos
-        if (jugador.body.velocity.y > 0 && jugador.body.bottom <= enemigo.body.top + 10) {
-            this.sonidoMuerteEnemigo.play(); // Reproducimos el sonido al matar a un enemigo
-            enemigo.disableBody(true, true); // Deshabilitamos al enemigo de la escena
-            console.log ("Enemigo muerto");
-            jugador.setVelocityY(-150); // Recibe un pequeño impulso al saltar sobre un enemigo
-            this.UI.actualizarContadorMonedas(2); // Al matar a un enemigo aumenta el contador de monedas
-        }
-        else {
-            this.morir(); // El jugador muere
-        }
-    }
-    // Metodo para controlar la logica de morir del jugador
-    morir() {
-        this.sonidoMuerteJugador.play(); // Reproducimos el sonido cuando el jugador muere
-        this.restarVidas();
-    }
     // Golpear bloques
     golpearBloque(jugador, tile) {
         let golpe = false; // Variable para controlar si ya hemos activado el bloque de monedas
@@ -402,21 +339,7 @@ export default class EscenaColinas extends Phaser.Scene {
         this.tilesPlataformas.setCollisionByExclusion([-1]); // Activamos la colision del nuevo bloque
     }
 
-    restarVidas () {
-        this.UI.actualizarContadorVidas(-1);
-        if (this.UI.vidas > 0) {
-            this.resetaearNivel();
-            this.jugador.setPosition (
-                this.jugador.posicionInicial.x,
-                this.jugador.posicionInicial.y,
-            )
-            this.jugador.setVelocity(0, 0)
-            this.musicaFondo.stop();
-            this.time.delayedCall (100, () => {
-                this.musicaFondo.play();
-            })
-        }
-    }
+        // Metodo para controlar la logica de morir del jugador
 
     activarPalanca() {
         this.tilesParedPinchos.setVisible(true); // Hacemos visibles los tiles
@@ -449,15 +372,15 @@ export default class EscenaColinas extends Phaser.Scene {
         }
     }
 
-    resetaearNivel () {
-        this.resetearTemporizador();
+    resetearNivel () {
+        super.resetearTemporizador();
+        super.resetearRecolectables();
         this.resetearBloquesMoneda();
-        this.restearEnemigos();
-        this.resetearRecolectables();
+        this.resetearEnemigos();
         this.resetearPalanca();
     }
 
-    restearEnemigos () {
+    resetearEnemigos () {
         this.grupoCaracoles.children.iterate(enemigo => {
             enemigo.enableBody(true, enemigo.posicionInicial.x, enemigo.posicionInicial.y, true, true);
         });
@@ -465,19 +388,7 @@ export default class EscenaColinas extends Phaser.Scene {
             enemigo.enableBody(true, enemigo.posicionInicial.x, enemigo.posicionInicial.y, true, true);
         });
     }
-    resetearRecolectables () {
 
-        this.grupoMonedas.children.iterate (recolectable  => {
-            recolectable.anims.stop();
-            recolectable.enableBody (true, recolectable.posicionInicial.x, recolectable.posicionInicial.y, true, true);
-
-            recolectable.play("spr_moneda_oro_girando", true);
-        });
-        this.grupoOrbesVida.children.iterate (recolectable  => {
-            recolectable.enableBody(true, recolectable.posicionInicial.x, recolectable.posicionInicial.y, true, true);
-            recolectable.body.enable = true;
-        });
-    }
     resetearPalanca() {
         this.tilesParedPinchos.setVisible(false); // Hacemos invisible la pared de pinchos
         this.colliderParedPinchos.active = false; // Deshabilitamos las fisicas de la pared de pinchos
@@ -497,12 +408,6 @@ export default class EscenaColinas extends Phaser.Scene {
             interactivo.activo = false;
         })
     }
-    resetearTemporizador() {
-        this.UI.temporizador.remove();
-        this.tiempo = this.tiempoInicial;
-        this.UI.textoTiempo.setText("Tiempo: " + this.tiempo);
-        this.UI.actualizarContadorTiempo(this.delay);
-    }
 
     resetearBloquesMoneda() {
         this.bloquesMonedaActivados.forEach (tile => {
@@ -515,19 +420,5 @@ export default class EscenaColinas extends Phaser.Scene {
             this.tilesPlataformas.setCollisionByExclusion([-1]); // Activamos la colision del nuevo bloque
         })
         this.bloquesMonedaActivados = [];
-    }
-    mantenerMonedasYVidas(datos) {
-        if (datos.monedas !== null && datos.monedas !== undefined) {
-            this.UI.monedasRecolectadas = datos.monedas
-        }
-        else {
-            this.UI.monedasRecolectadas = 0;
-        }
-        if (datos.vidas !== null && datos.vidas !== undefined) {
-            this.UI.vidas = datos.vidas;
-        }
-        else {
-            this.UI.vidas = this.UI.vidasIniciales
-        }
     }
 }

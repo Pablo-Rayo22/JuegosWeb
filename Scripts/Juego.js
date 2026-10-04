@@ -1,10 +1,14 @@
 /// @author: Pablo Jimenez Garcia
-/// asignatura: Juegos para la Web
 
+/// <reference path="C:/Users/pablo/AppData/Roaming/npm/node_modules/phaser/types/phaser.d.ts" />
+
+import MenuInicial from "../Escenas/MenuInicial.js";
 import EscenaArboles from "../Escenas/EscenaArboles.js";
 import EscenaColinas from "../Escenas/EscenaColinas.js";
 import EscenaGameOver from "../Escenas/EscenaGameOver.js";
 import EscenaVictoria from "../Escenas/EscenaVictoria.js";
+import EscenaControles from "../Escenas/EscenaControles.js";
+import EscenaBase from "../Escenas/EscenaBase.js";
 
 // Constantes
 const ANCHO = 3840;
@@ -22,7 +26,7 @@ let config = {
     input: {
         gamepad: true // ¡Mantenemos el soporte de mandos activo!
     },
-    scene: [EscenaArboles, EscenaColinas, EscenaGameOver, EscenaVictoria], // ¡Incluimos las escenas en el array!
+    scene: [MenuInicial, EscenaBase, EscenaArboles, EscenaColinas, EscenaGameOver, EscenaVictoria, EscenaControles], // ¡Incluimos las escenas en el array!
     physics: {
         default: "arcade",
         arcade: {
